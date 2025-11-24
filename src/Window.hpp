@@ -27,6 +27,8 @@ public:
   void onUpdate();
 
   GLFWwindow *getHandle() { return m_nativeHandle; }
+  unsigned int getWidth() { return m_properties.width; }
+  unsigned int getHeight() { return m_properties.height; }
 
 private:
   static void framebuffer_size_callback(GLFWwindow *window, int width,
