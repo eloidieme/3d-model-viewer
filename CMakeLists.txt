@@ -39,6 +39,7 @@ find_package(OpenGL REQUIRED)
 add_executable(main
     src/main.cpp
     src/stb_image.cpp
+    src/Window.cpp
     vendor/glad/src/glad.c
 )
 
