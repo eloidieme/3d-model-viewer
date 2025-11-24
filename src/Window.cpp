@@ -23,7 +23,7 @@ Window::Window(unsigned int width, unsigned int height,
   glfwMakeContextCurrent(m_nativeHandle);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    throw std::runtime_error("Failed to initialize GLAD");
+    throw std::runtime_error("ERROR::GLAD::FAILED_TO_INIT_GLAD");
   }
 
   glfwSetFramebufferSizeCallback(m_nativeHandle,
@@ -55,9 +55,6 @@ void Window::init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-  // Temporary
-  glfwInit();
 }
 
 void Window::onUpdate() {

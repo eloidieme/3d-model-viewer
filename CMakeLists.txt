@@ -40,6 +40,8 @@ add_executable(main
     src/main.cpp
     src/stb_image.cpp
     src/Window.cpp
+    src/App.cpp
+    src/Shader.cpp
     vendor/glad/src/glad.c
 )
 
