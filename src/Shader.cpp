@@ -92,6 +92,11 @@ void Shader::setUniformInt(const std::string &name, int value) const {
 void Shader::setUniformBool(const std::string &name, bool value) const {
   glUniform1i(glGetUniformLocation(m_programID, name.c_str()), (int)value);
 }
+void Shader::setUniformVec3(const std::string &name,
+                            const glm::vec3 &value) const {
+  glUniform3fv(glGetUniformLocation(m_programID, name.c_str()), 1,
+               glm::value_ptr(value));
+}
 void Shader::setUniformMat4(const std::string &name,
                             const glm::mat4 &mat) const {
   glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1,

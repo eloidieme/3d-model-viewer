@@ -14,11 +14,11 @@ App::App() {
     throw std::runtime_error("ERROR::GLFW::FAILED_TO_INIT_GLFW");
   }
   Window::init();
+
   m_window = std::make_unique<Window>();
+  m_ourModel = std::make_unique<Model>("assets/models/backpack/backpack.obj");
 
   glEnable(GL_DEPTH_TEST);
-
-  m_ourModel = std::make_unique<Model>("assets/models/backpack/backpack.obj");
 }
 
 App::~App() {
@@ -35,7 +35,7 @@ void App::run() {
     processInput();
 
     // Render
-    glClearColor(0.5f, 0.0f, 0.8f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     projection = glm::perspective(
@@ -46,12 +46,15 @@ void App::run() {
 
     model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(),
                         glm::vec3(1.0f, 0.5f, 0.0f));
+    glm::vec3 lightPos(2.0f, 2.0f, 2.0f);
 
     shader.setUniformMat4("model", model);
     shader.setUniformMat4("view", view);
     shader.setUniformMat4("projection", projection);
 
     shader.useShader();
+    shader.setUniformVec3("lightPos", lightPos);
+
     m_ourModel->draw(shader);
 
     m_window->onUpdate();

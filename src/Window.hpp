@@ -14,7 +14,7 @@ struct WindowProps {
 class Window {
 public:
   Window(unsigned int width, unsigned int height, const std::string &title);
-  Window() : Window(800, 600, "Window") {};
+  Window() : Window(1280, 960, "3D Model Viewer") {};
   ~Window();
 
   Window(const Window &other) = delete;
