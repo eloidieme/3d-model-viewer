@@ -44,6 +44,7 @@ add_executable(main
     src/Shader.cpp
     src/Texture.cpp
     src/Mesh.cpp
+    src/Model.cpp
     vendor/glad/src/glad.c
 )
 

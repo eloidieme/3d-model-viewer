@@ -17,6 +17,7 @@ Texture::Texture(const std::string &textureFilePath) {
   stbi_set_flip_vertically_on_load(true);
   unsigned char *texData =
       stbi_load(textureFilePath.c_str(), &m_width, &m_height, &m_BPP, 0);
+  m_path = textureFilePath;
 
   GLenum format;
   if (m_BPP == 1) {

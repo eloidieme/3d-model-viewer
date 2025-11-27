@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
-           std::vector<Texture> textures) {
+           std::vector<std::shared_ptr<Texture>> textures) {
   m_vertices = vertices;
   m_indices = indices;
   m_textures = std::move(textures);
@@ -55,8 +55,8 @@ Mesh &Mesh::operator=(Mesh &&other) {
 
 void Mesh::draw(Shader &shader) {
   shader.useShader();
-  for (auto &texture : m_textures) {
-    texture.bind();
+  for (unsigned int i = 0; i < m_textures.size(); i++) {
+    m_textures[i]->bind(i);
   }
 
   glBindVertexArray(VAO);

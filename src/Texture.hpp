@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 class Texture {
@@ -15,8 +17,10 @@ public:
 
   int getWidth() const { return m_width; }
   int getHeight() const { return m_height; }
+  std::string getPath() const { return m_path; }
 
 private:
   unsigned int m_textureID;
   int m_width, m_height, m_BPP;
+  std::string m_path;
 };
