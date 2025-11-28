@@ -56,7 +56,16 @@ Mesh &Mesh::operator=(Mesh &&other) {
 void Mesh::draw(Shader &shader) {
   shader.useShader();
   for (unsigned int i = 0; i < m_textures.size(); i++) {
-    m_textures[i]->bind(i);
+    std::string type = m_textures[i]->getType();
+
+    unsigned int slot = 0;
+    if (type == "texture_diffuse") {
+      slot = 0;
+    } else if (type == "texture_specular") {
+      slot = 1;
+    }
+
+    m_textures[i]->bind(slot);
   }
 
   glBindVertexArray(VAO);

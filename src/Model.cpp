@@ -110,6 +110,7 @@ Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
     if (!skip) {
       auto texture = std::make_shared<Texture>(fullPath);
+      texture->setType(name);
       m_loadedTextures.push_back(texture);
       ret.push_back(texture);
     }
