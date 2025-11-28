@@ -21,11 +21,7 @@ App::App() {
   glEnable(GL_DEPTH_TEST);
 }
 
-App::~App() {
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
-  glfwTerminate();
-}
+App::~App() { glfwTerminate(); }
 
 void App::run() {
   Shader shader("assets/shaders/vert.glsl", "assets/shaders/frag.glsl");
@@ -42,18 +38,20 @@ void App::run() {
         glm::radians(45.f), (float)m_window->getWidth() / m_window->getHeight(),
         0.1f, 100.f);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f));
+    view = glm::translate(glm::mat4(1.0f), -m_viewPos);
 
-    model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(),
-                        glm::vec3(1.0f, 0.5f, 0.0f));
-    glm::vec3 lightPos(2.0f, 2.0f, 2.0f);
+    model = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotX),
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+    model =
+        glm::rotate(model, glm::radians(m_rotY), glm::vec3(0.0f, 1.0f, 0.0f));
 
     shader.setUniformMat4("model", model);
     shader.setUniformMat4("view", view);
     shader.setUniformMat4("projection", projection);
 
     shader.useShader();
-    shader.setUniformVec3("lightPos", lightPos);
+    shader.setUniformVec3("lightPos", m_lightPos);
+    shader.setUniformVec3("viewPos", m_viewPos);
 
     m_ourModel->draw(shader);
 
@@ -65,5 +63,33 @@ void App::processInput() {
   if (glfwGetKey(m_window->getHandle(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||
       glfwWindowShouldClose(m_window->getHandle())) {
     m_isRunning = false;
+  }
+
+  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_L) == GLFW_PRESS) {
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+      m_lightPos.x += 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+      m_lightPos.x -= 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_UP) == GLFW_PRESS) {
+      m_lightPos.y -= 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+      m_lightPos.y += 1.0f;
+    }
+  } else {
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+      m_rotY += 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+      m_rotY -= 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_UP) == GLFW_PRESS) {
+      m_rotX -= 1.0f;
+    }
+    if (glfwGetKey(m_window->getHandle(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+      m_rotX += 1.0f;
+    }
   }
 }
