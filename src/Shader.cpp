@@ -83,22 +83,36 @@ Shader::~Shader() { glDeleteProgram(m_programID); }
 
 void Shader::useShader() { glUseProgram(m_programID); }
 
+int Shader::getUniformLocation(const std::string &name) const {
+  if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end()) {
+    return m_uniformLocationCache[name];
+  }
+
+  int location = glGetUniformLocation(m_programID, name.c_str());
+  if (location == -1) {
+    std::cerr << "WARNING: Uniform '" << name << "' doesn't exist!"
+              << std::endl;
+  }
+
+  m_uniformLocationCache[name] = location;
+  return location;
+}
+
 void Shader::setUniformFloat(const std::string &name, float value) const {
-  glUniform1f(glGetUniformLocation(m_programID, name.c_str()), value);
+  glUniform1f(getUniformLocation(name), value);
 }
 void Shader::setUniformInt(const std::string &name, int value) const {
-  glUniform1i(glGetUniformLocation(m_programID, name.c_str()), value);
+  glUniform1i(getUniformLocation(name), value);
 }
 void Shader::setUniformBool(const std::string &name, bool value) const {
-  glUniform1i(glGetUniformLocation(m_programID, name.c_str()), (int)value);
+  glUniform1i(getUniformLocation(name), (int)value);
 }
 void Shader::setUniformVec3(const std::string &name,
                             const glm::vec3 &value) const {
-  glUniform3fv(glGetUniformLocation(m_programID, name.c_str()), 1,
-               glm::value_ptr(value));
+  glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value));
 }
 void Shader::setUniformMat4(const std::string &name,
                             const glm::mat4 &mat) const {
-  glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1,
-                     GL_FALSE, glm::value_ptr(mat));
+  glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE,
+                     glm::value_ptr(mat));
 }

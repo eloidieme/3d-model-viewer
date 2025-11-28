@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <unordered_map>
 
 class Shader {
 public:
@@ -25,4 +26,8 @@ public:
 
 private:
   unsigned int m_programID;
+
+  mutable std::unordered_map<std::string, int> m_uniformLocationCache;
+
+  int getUniformLocation(const std::string &name) const;
 };

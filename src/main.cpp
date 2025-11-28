@@ -1,14 +1,26 @@
 #include "App.hpp"
-#include "Shader.hpp"
-#include "Window.hpp"
 
-#include <GLFW/glfw3.h>
+#include <filesystem>
 
-#include <iostream>
+int main(int argc, char *argv[]) {
+  std::filesystem::path modelPath = "assets/models/backpack/backpack.obj";
 
-int main() {
-  App app;
-  app.run();
+  if (argc > 1) {
+    modelPath = argv[1];
+  }
+
+  if (!std::filesystem::exists(modelPath)) {
+    std::cerr << "FATAL: Path does not exist: " << modelPath << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  try {
+    App app(modelPath);
+    app.run();
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }

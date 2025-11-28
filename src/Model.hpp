@@ -9,7 +9,7 @@
 
 class Model {
 public:
-  Model(std::string modelFilePath);
+  explicit Model(std::string modelFilePath);
   void draw(Shader &shader);
 
 private:

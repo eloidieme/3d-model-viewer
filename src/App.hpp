@@ -1,22 +1,29 @@
 #pragma once
 
-#include <memory>
-
+#include "Camera.hpp"
 #include "Model.hpp"
+#include "Transform.hpp"
 #include "Window.hpp"
+
+#include <filesystem>
+#include <memory>
 
 class App {
 public:
-  App();
+  App(std::filesystem::path modelPath);
   ~App();
   void run();
 
 private:
+  float m_deltaTime = 0.0f;
+  float m_lastFrame = 0.0f;
+
   bool m_isRunning = true;
-  float m_rotX = 0.0f;
-  float m_rotY = 0.0f;
+  struct Transform m_transform;
+  Camera m_camera;
+
   glm::vec3 m_lightPos{2.0f, 2.0f, 2.0f};
-  glm::vec3 m_viewPos{0.0f, 0.0f, 7.5f};
+  glm::mat4 m_projection;
 
   std::unique_ptr<Model> m_ourModel;
   std::unique_ptr<Window> m_window;
