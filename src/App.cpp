@@ -66,21 +66,21 @@ void App::run() {
 }
 
 void App::processInput() {
-  if (Input::isKeyPressed(Key::Escape))
+  if (Input::isKeyPressed(KeyCode::Escape))
     m_isRunning = false;
 
-  if (Input::isKeyPressed(Key::Up) || Input::isKeyPressed(Key::W))
-    m_camera.processKeyboard(FORWARD, m_deltaTime);
-  if (Input::isKeyPressed(Key::Down) || Input::isKeyPressed(Key::S))
-    m_camera.processKeyboard(BACKWARD, m_deltaTime);
-  if (Input::isKeyPressed(Key::Left) || Input::isKeyPressed(Key::A))
-    m_camera.processKeyboard(LEFT, m_deltaTime);
-  if (Input::isKeyPressed(Key::Right) || Input::isKeyPressed(Key::D))
-    m_camera.processKeyboard(RIGHT, m_deltaTime);
+  if (Input::isKeyPressed(KeyCode::Up) || Input::isKeyPressed(KeyCode::W))
+    m_camera.processKeyboard(CameraMovement::FORWARD, m_deltaTime);
+  if (Input::isKeyPressed(KeyCode::Down) || Input::isKeyPressed(KeyCode::S))
+    m_camera.processKeyboard(CameraMovement::BACKWARD, m_deltaTime);
+  if (Input::isKeyPressed(KeyCode::Left) || Input::isKeyPressed(KeyCode::A))
+    m_camera.processKeyboard(CameraMovement::LEFT, m_deltaTime);
+  if (Input::isKeyPressed(KeyCode::Right) || Input::isKeyPressed(KeyCode::D))
+    m_camera.processKeyboard(CameraMovement::RIGHT, m_deltaTime);
 
   // Hot Reloading Shaders
   static bool isRPressed = false;
-  if (Input::isKeyPressed(Key::R)) {
+  if (Input::isKeyPressed(KeyCode::R)) {
     if (!isRPressed) {
       std::cout << "Reloading Shaders..." << std::endl;
 

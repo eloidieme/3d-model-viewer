@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
-enum Camera_Movement { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
+enum class CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
 
 class Camera {
 
@@ -31,19 +31,19 @@ public:
 
   const glm::mat4 getProjectionMatrix() const { return m_projection; }
 
-  void processKeyboard(Camera_Movement direction, float deltaTime) {
+  void processKeyboard(CameraMovement direction, float deltaTime) {
     float velocity = m_movementSpeed * deltaTime;
-    if (direction == FORWARD)
+    if (direction == CameraMovement::FORWARD)
       m_position += m_front * velocity;
-    if (direction == BACKWARD)
+    if (direction == CameraMovement::BACKWARD)
       m_position -= m_front * velocity;
-    if (direction == LEFT)
+    if (direction == CameraMovement::LEFT)
       m_position -= m_right * velocity;
-    if (direction == RIGHT)
+    if (direction == CameraMovement::RIGHT)
       m_position += m_right * velocity;
-    if (direction == UP)
+    if (direction == CameraMovement::UP)
       m_position += m_worldUp * velocity;
-    if (direction == DOWN)
+    if (direction == CameraMovement::DOWN)
       m_position -= m_worldUp * velocity;
   }
 

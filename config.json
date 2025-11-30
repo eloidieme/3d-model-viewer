@@ -13,7 +13,9 @@
     "MovementSpeed": 2.5,
     "Sensitivity": 0.1,
     "Fov": 45.0,
-    "StartPosition": [0.0, 0.0, 7.5]
+    "StartPosition": [0.0, 0.0, 7.5],
+    "NearPlane": 0.1,
+    "FarPlane": 100.0
   },
   "Paths": {
     "DefaultModel": "assets/models/backpack/backpack.obj",

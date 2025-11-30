@@ -95,6 +95,10 @@ void load(const std::string &path) {
         Camera::Fov = c["Fov"];
       if (c.contains("StartPosition"))
         c["StartPosition"].get_to(Camera::StartPosition);
+      if (c.contains("NearPlane"))
+        Camera::NearPlane = c["NearPlane"];
+      if (c.contains("FarPlane"))
+        Camera::FarPlane = c["FarPlane"];
     }
 
     if (j.contains("Paths")) {

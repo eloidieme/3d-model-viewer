@@ -2,8 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Key {
-enum {
+enum class KeyCode {
   Space = 32,
   Escape = 256,
   Enter = 257,
@@ -15,6 +14,5 @@ enum {
   A = 65,
   S = 83,
   D = 68,
-  R = 82,
+  R = 82
 };
-}

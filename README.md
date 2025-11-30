@@ -1,1 +1,117 @@
-# 3D Model Viewer
+# Deltaviewer
+
+A modern, high-performance 3D model viewer written in C++17 using OpenGL 3.3+.
+
+Deltaviewer is designed with a clean architecture, supporting hot-reloadable shaders, runtime configuration via JSON, and efficient mesh rendering. It leverages **Assimp** for broad model format support, **GLFW** for windowing, and **GLM** for mathematics.
+
+## Features
+
+- **Model Support:** Loads varied 3D formats (OBJ, FBX, GLTF, etc.) via the Open Asset Import Library (Assimp).
+- **Shader Hot-Reloading:** Edit `.glsl` shader files and press `R` to reload them instantly without restarting the app.
+- **Runtime Configuration:** Modify window resolution, camera sensitivity, and render settings via `config.json` without recompiling.
+- **Performance:** Optimized mesh loading with move semantics and cached transform matrices.
+- **Camera System:** First-person flying camera with adjustable speed and FOV.
+- **Cross-Platform:** Robust path handling using C++17 `<filesystem>` (Windows/macOS/Linux compatible).
+
+## Prerequisites
+
+- **CMake** (3.11 or higher)
+- **C++ Compiler** with C++17 support (GCC, Clang, or MSVC)
+- **Git** (required to fetch dependencies)
+
+## Build Instructions
+
+This project uses CMake's `FetchContent` to automatically download dependencies (GLFW, GLM, Assimp).
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone [https://github.com/yourusername/deltaviewer.git](https://github.com/yourusername/deltaviewer.git)
+    cd deltaviewer
+    ```
+
+2.  **Create a build directory:**
+
+    ```bash
+    mkdir build
+    cd build
+    ```
+
+3.  **Configure and Build:**
+    ```bash
+    cmake ..
+    cmake --build .
+    ```
+
+## Usage
+
+### Running the Viewer
+
+By default, the viewer loads the model specified in `config.json`. You can also override this by passing a path as a command-line argument:
+
+```bash
+# Run with default model (defined in config.json)
+./main
+
+# Run with a specific model
+./main path/to/your/model.obj
+```
+
+> **Note:** Ensure `config.json` and the `assets/` folder are in the same directory as the executable (or in the project root if running from an IDE).
+
+### Controls
+
+| Key                   | Action                                          |
+| :-------------------- | :---------------------------------------------- |
+| **W / Z** or **Up**   | Move Forward                                    |
+| **S** or **Down**     | Move Backward                                   |
+| **A / Q** or **Left** | Move Left                                       |
+| **D** or **Right**    | Move Right                                      |
+| **Mouse**             | Look around                                     |
+| **R**                 | **Hot-Reload Shaders** (Recompiles .glsl files) |
+| **Esc**               | Exit Application                                |
+
+_Note: WASD/ZQSD support is handled automatically to support QWERTY and AZERTY layouts._
+
+## Configuration (`config.json`)
+
+You can customize the application settings by editing `config.json` in the root directory. No recompilation is needed.
+
+```json
+{
+  "Window": {
+    "Width": 1280,
+    "Height": 960,
+    "Title": "Deltaviewer"
+  },
+  "Render": {
+    "ClearColor": [0.1, 0.1, 0.2, 1.0],
+    "LightPosition": [2.0, 2.0, 2.0],
+    "ClippingPlane": [0.5, 0.5, 0.0, -0.5]
+  },
+  "Camera": {
+    "MovementSpeed": 2.5,
+    "Sensitivity": 0.1,
+    "Fov": 45.0,
+    "StartPosition": [0.0, 0.0, 7.5],
+    "NearPlane": 0.1,
+    "FarPlane": 100.0
+  },
+  "Paths": {
+    "DefaultModel": "assets/models/backpack/backpack.obj",
+    "ShaderVert": "assets/shaders/vert.glsl",
+    "ShaderFrag": "assets/shaders/frag.glsl"
+  }
+}
+```
+
+## Project Structure
+
+- **src/**: Source code.
+  - **Core/**: Windowing, Input handling, Events, Transforms.
+  - **Graphics/**: OpenGL wrappers (Renderer, Shader, Texture, Mesh).
+  - **Scene/**: Model loading and node processing.
+  - **App.cpp**: Main application loop and logic.
+  - **Config.cpp**: JSON parsing and global settings.
+- **assets/**: Shaders and default models.
+- **vendor/**: Third-party libraries (GLAD, stb_image, nlohmann_json).
