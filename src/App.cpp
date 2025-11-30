@@ -28,9 +28,6 @@ App::App(std::filesystem::path modelPath) {
   m_renderer.setClearColor(Config::Render::ClearColor);
 
   m_ourModel = std::make_shared<Model>(modelPath, m_resourceManager);
-  m_transform.Position = glm::vec3(0);
-  m_transform.Rotation = glm::vec3(0);
-  m_transform.Scale = glm::vec3(1);
 
   m_shader = m_resourceManager.loadShader("default", Config::Paths::ShaderVert,
                                           Config::Paths::ShaderFrag);
