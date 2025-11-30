@@ -1,5 +1,7 @@
 #include "App.hpp"
 
+#include <iostream>
+
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
@@ -30,6 +32,9 @@ App::App(std::filesystem::path modelPath) {
   m_transform.Rotation = glm::vec3(0);
   m_transform.Scale = glm::vec3(1);
 
+  m_shader = m_resourceManager.loadShader("default", Config::Paths::ShaderVert,
+                                          Config::Paths::ShaderFrag);
+
   m_camera.setAspectRatio((float)m_window->getWidth(),
                           (float)m_window->getHeight());
 }
@@ -42,9 +47,6 @@ App::~App() {
 }
 
 void App::run() {
-  auto shader = m_resourceManager.loadShader(
-      "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
-
   while (m_isRunning) {
     float currentFrame = static_cast<float>(glfwGetTime());
     m_deltaTime = currentFrame - m_lastFrame;
@@ -54,12 +56,12 @@ void App::run() {
 
     m_renderer.clear();
 
-    shader->useShader();
-    shader->setUniformVec3("lightPos", m_lightPos);
-    shader->setUniformVec4("plane", m_plane);
+    m_shader->useShader();
+    m_shader->setUniformVec3("lightPos", m_lightPos);
+    m_shader->setUniformVec4("plane", m_plane);
 
-    m_renderer.beginScene(m_camera, *shader);
-    m_renderer.submit(m_ourModel, m_transform, *shader);
+    m_renderer.beginScene(m_camera, *m_shader);
+    m_renderer.submit(m_ourModel, m_transform, *m_shader);
     m_renderer.endScene();
 
     m_window->onUpdate();
@@ -70,14 +72,38 @@ void App::processInput() {
   if (Input::isKeyPressed(Key::Escape))
     m_isRunning = false;
 
-  if (Input::isKeyPressed(Key::Up) || Input::isKeyPressed(Key::Z))
+  if (Input::isKeyPressed(Key::Up) || Input::isKeyPressed(Key::W))
     m_camera.processKeyboard(FORWARD, m_deltaTime);
   if (Input::isKeyPressed(Key::Down) || Input::isKeyPressed(Key::S))
     m_camera.processKeyboard(BACKWARD, m_deltaTime);
-  if (Input::isKeyPressed(Key::Left) || Input::isKeyPressed(Key::Q))
+  if (Input::isKeyPressed(Key::Left) || Input::isKeyPressed(Key::A))
     m_camera.processKeyboard(LEFT, m_deltaTime);
   if (Input::isKeyPressed(Key::Right) || Input::isKeyPressed(Key::D))
     m_camera.processKeyboard(RIGHT, m_deltaTime);
+
+  // Hot Reloading Shaders
+  static bool isRPressed = false;
+  if (Input::isKeyPressed(Key::R)) {
+    if (!isRPressed) {
+      std::cout << "Reloading Shaders..." << std::endl;
+
+      m_resourceManager.clear();
+
+      try {
+        auto newShader = m_resourceManager.loadShader(
+            "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
+
+        m_shader = newShader;
+        std::cout << "Shader compilation successful!" << std::endl;
+      } catch (const std::exception &e) {
+        std::cerr << "SHADER RELOAD ERROR:\n" << e.what() << std::endl;
+      }
+
+      isRPressed = true;
+    }
+  } else {
+    isRPressed = false;
+  }
 
   auto [xpos, ypos] = Input::getMousePosition();
 

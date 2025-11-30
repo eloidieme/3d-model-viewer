@@ -9,6 +9,7 @@
 #include "Graphics/Camera.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/ResourceManager.hpp"
+#include "Graphics/Shader.hpp"
 
 class Event;
 class Model;
@@ -21,9 +22,6 @@ public:
   void run();
 
 private:
-  ResourceManager m_resourceManager;
-  Renderer m_renderer;
-
   float m_deltaTime = 0.0f;
   float m_lastFrame = 0.0f;
 
@@ -40,7 +38,11 @@ private:
   glm::vec4 m_plane{Config::Render::ClippingPlane};
 
   std::unique_ptr<Window> m_window;
+  ResourceManager m_resourceManager;
+  Renderer m_renderer;
+
   std::shared_ptr<Model> m_ourModel;
+  std::shared_ptr<Shader> m_shader;
 
   void processInput();
   void onResize(int width, int height);

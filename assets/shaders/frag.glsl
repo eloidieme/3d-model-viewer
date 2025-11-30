@@ -42,7 +42,7 @@ void main() {
 
     float dist = dot(FragPos, plane.xyz) + plane.w; 
 
-    if (dist < 0) discard;
+    if (dist > 0) discard;
 
     FragColor = vec4(result, objectColor.a);
 }
