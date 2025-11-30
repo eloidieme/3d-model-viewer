@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include <filesystem>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
   std::filesystem::path modelPath = "assets/models/backpack/backpack.obj";

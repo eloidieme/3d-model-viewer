@@ -38,18 +38,25 @@ find_package(OpenGL REQUIRED)
 # --- Add Executable ---
 add_executable(main
     src/main.cpp
-    src/stb_image.cpp
-    src/Window.cpp
     src/App.cpp
-    src/Shader.cpp
-    src/Texture.cpp
-    src/Mesh.cpp
-    src/Model.cpp
+
+    src/Core/Window.cpp
+
+    src/Graphics/Renderer.cpp
+    src/Graphics/Shader.cpp
+    src/Graphics/Texture.cpp
+    src/Graphics/Mesh.cpp
+    src/Graphics/ResourceManager.cpp
+    src/Graphics/stb_image.cpp
+
+    src/Scene/Model.cpp
+
     vendor/glad/src/glad.c
 )
 
 # --- Include Directories ---
 target_include_directories(main PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/vendor/glad/include
     ${PROJECT_SOURCE_DIR}/vendor/stb
 )

@@ -1,13 +1,10 @@
-#include "Window.hpp"
+#include "Core/Window.hpp"
 
 #include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
 
-void Window::framebuffer_size_callback(GLFWwindow *window, int width,
-                                       int height) {
-  glViewport(0, 0, width, height);
-}
+#include "Core/Event.hpp"
 
 Window::Window(unsigned int width, unsigned int height,
                const std::string &title) {
@@ -20,14 +17,28 @@ Window::Window(unsigned int width, unsigned int height,
   if (m_nativeHandle == nullptr) {
     throw std::runtime_error("ERROR::WINDOW::FAILED_TO_CREATE_WINDOW");
   }
+  glfwSetWindowUserPointer(m_nativeHandle, this);
   glfwMakeContextCurrent(m_nativeHandle);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     throw std::runtime_error("ERROR::GLAD::FAILED_TO_INIT_GLAD");
   }
 
-  glfwSetFramebufferSizeCallback(m_nativeHandle,
-                                 Window::framebuffer_size_callback);
+  glfwSetFramebufferSizeCallback(m_nativeHandle, [](GLFWwindow *window,
+                                                    int width, int height) {
+    auto *instance = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    if (instance && instance->m_eventCallback) {
+      WindowResizeEvent event(width, height);
+      instance->m_eventCallback(event);
+    }
+  });
+  glfwSetWindowCloseCallback(m_nativeHandle, [](GLFWwindow *window) {
+    auto *instance = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    if (instance && instance->m_eventCallback) {
+      WindowCloseEvent event;
+      instance->m_eventCallback(event);
+    }
+  });
 }
 
 Window::~Window() { glfwDestroyWindow(m_nativeHandle); };

@@ -14,7 +14,9 @@ public:
   Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up)
       : m_position(position), m_target(target), m_up(up) {}
 
-  glm::mat4 getViewMatrix() { return glm::lookAt(m_position, m_target, m_up); }
+  glm::mat4 getViewMatrix() const {
+    return glm::lookAt(m_position, m_target, m_up);
+  }
   glm::vec3 getPosition() const { return m_position; }
 
 private:

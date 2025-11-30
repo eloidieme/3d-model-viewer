@@ -12,6 +12,7 @@ uniform float materialShininess;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform vec4 plane;
 
 void main() {
     float ambientStrength = 0.1;
@@ -34,6 +35,10 @@ void main() {
 
     vec4 objectColor = texture(texture_diffuse1, TexCoord);
     vec3 result = (ambient + diffuse) * objectColor.rgb + specular;
+
+    float dist = dot(FragPos, plane.xyz) + plane.w; 
+
+    if (dist < 0) discard;
 
     FragColor = vec4(result, objectColor.a);
 }

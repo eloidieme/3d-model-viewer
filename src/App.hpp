@@ -1,12 +1,15 @@
 #pragma once
 
-#include "Camera.hpp"
-#include "Model.hpp"
-#include "Transform.hpp"
-#include "Window.hpp"
-
 #include <filesystem>
 #include <memory>
+#include <vector>
+
+#include "Core/Transform.hpp"
+#include "Graphics/Camera.hpp"
+
+class Event;
+class Model;
+class Window;
 
 class App {
 public:
@@ -19,14 +22,18 @@ private:
   float m_lastFrame = 0.0f;
 
   bool m_isRunning = true;
+
   struct Transform m_transform;
   Camera m_camera;
 
   glm::vec3 m_lightPos{2.0f, 2.0f, 2.0f};
+  glm::vec4 m_plane{0.5f, 0.5f, 0.0f, -0.5f};
   glm::mat4 m_projection;
 
-  std::unique_ptr<Model> m_ourModel;
+  std::shared_ptr<Model> m_ourModel;
   std::unique_ptr<Window> m_window;
 
   void processInput();
+  void onResize(int width, int height);
+  void onEvent(Event &e);
 };

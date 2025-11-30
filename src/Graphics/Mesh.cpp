@@ -1,6 +1,9 @@
-#include "Mesh.hpp"
+#include "Graphics/Mesh.hpp"
 
 #include <glad/glad.h>
+
+#include "Graphics/Shader.hpp"
+#include "Graphics/Texture.hpp"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
            std::vector<std::shared_ptr<Texture>> textures) {
@@ -56,13 +59,20 @@ Mesh &Mesh::operator=(Mesh &&other) {
 void Mesh::draw(Shader &shader) {
   shader.useShader();
   for (unsigned int i = 0; i < m_textures.size(); i++) {
-    std::string type = m_textures[i]->getType();
-
     unsigned int slot = 0;
-    if (type == "texture_diffuse") {
+    switch (m_textures[i]->getType()) {
+    case TextureType::Diffuse:
       slot = 0;
-    } else if (type == "texture_specular") {
+      break;
+    case TextureType::Specular:
       slot = 1;
+      break;
+    case TextureType::Normal:
+      slot = 2;
+      break;
+    default:
+      slot = 0;
+      break;
     }
 
     m_textures[i]->bind(slot);

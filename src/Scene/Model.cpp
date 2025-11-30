@@ -1,4 +1,5 @@
-#include "Model.hpp"
+#include "Scene/Model.hpp"
+#include "Graphics/ResourceManager.hpp"
 
 #include <glm/glm.hpp>
 
@@ -73,10 +74,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
   }
 
   aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-  auto diffuseTextures =
-      loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+  auto diffuseTextures = loadMaterialTextures(material, aiTextureType_DIFFUSE,
+                                              TextureType::Diffuse);
   auto specularTextures = loadMaterialTextures(material, aiTextureType_SPECULAR,
-                                               "texture_specular");
+                                               TextureType::Specular);
 
   textures.reserve(diffuseTextures.size() + specularTextures.size());
   textures.insert(textures.end(), diffuseTextures.begin(),
@@ -89,7 +90,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 
 std::vector<std::shared_ptr<Texture>>
 Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                            std::string name) {
+                            TextureType typeName) {
   std::vector<std::shared_ptr<Texture>> ret;
 
   for (int i = 0; i < mat->GetTextureCount(type); i++) {
@@ -98,22 +99,9 @@ Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
     std::string fullPath = m_directory + '/' + str.C_Str();
 
-    bool skip = false;
-
-    for (auto &loadedTex : m_loadedTextures) {
-      if (strcmp(loadedTex->getPath().c_str(), fullPath.c_str()) == 0) {
-        ret.push_back(loadedTex);
-        skip = true;
-        break;
-      }
-    }
-
-    if (!skip) {
-      auto texture = std::make_shared<Texture>(fullPath);
-      texture->setType(name);
-      m_loadedTextures.push_back(texture);
-      ret.push_back(texture);
-    }
+    std::shared_ptr<Texture> texture =
+        ResourceManager::loadTexture(fullPath, typeName);
+    ret.push_back(texture);
   }
 
   return ret;

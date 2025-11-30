@@ -1,9 +1,13 @@
 #pragma once
 
-#include "Shader.hpp"
-#include "Texture.hpp"
-#include <glm/glm.hpp>
+#include <memory>
+#include <string>
 #include <vector>
+
+#include <glm/glm.hpp>
+
+class Shader;
+class Texture;
 
 struct Vertex {
   glm::vec3 Position;

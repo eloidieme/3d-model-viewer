@@ -1,11 +1,12 @@
-#include "Shader.hpp"
+#include "Graphics/Shader.hpp"
 
 #include <fstream>
-#include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string &vertexShaderPath,
                const std::string &fragmentShaderPath) {
@@ -110,6 +111,10 @@ void Shader::setUniformBool(const std::string &name, bool value) const {
 void Shader::setUniformVec3(const std::string &name,
                             const glm::vec3 &value) const {
   glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value));
+}
+void Shader::setUniformVec4(const std::string &name,
+                            const glm::vec4 &value) const {
+  glUniform4fv(getUniformLocation(name), 1, glm::value_ptr(value));
 }
 void Shader::setUniformMat4(const std::string &name,
                             const glm::mat4 &mat) const {
