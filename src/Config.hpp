@@ -4,32 +4,32 @@
 #include <string>
 
 namespace Config {
+void load(const std::string &path);
+
 namespace Window {
-constexpr unsigned int Width = 1280;
-constexpr unsigned int Height = 960;
-const std::string Title = "Deltaviewer";
+extern unsigned int Width;
+extern unsigned int Height;
+extern std::string Title;
 } // namespace Window
 
 namespace Render {
-const glm::vec4 ClearColor = {0.1f, 0.1f, 0.2f, 1.0f};
-
-const glm::vec3 LightPosition = {2.0f, 2.0f, 2.0f};
-const glm::vec4 ClippingPlane = {0.5f, 0.5f, 0.0f, -0.5f};
+extern glm::vec4 ClearColor;
+extern glm::vec3 LightPosition;
+extern glm::vec4 ClippingPlane;
 } // namespace Render
 
 namespace Camera {
-constexpr float MovementSpeed = 2.5f;
-constexpr float Sensitivity = 0.1f;
-constexpr float Fov = 45.0f;
-constexpr float NearPlane = 0.1f;
-constexpr float FarPlane = 100.0f;
-
-const glm::vec3 StartPosition = {0.0f, 0.0f, 7.5f};
+extern float MovementSpeed;
+extern float Sensitivity;
+extern float Fov;
+extern float NearPlane;
+extern float FarPlane;
+extern glm::vec3 StartPosition;
 } // namespace Camera
 
 namespace Paths {
-const std::string DefaultModel = "assets/models/backpack/backpack.obj";
-const std::string ShaderVert = "assets/shaders/vert.glsl";
-const std::string ShaderFrag = "assets/shaders/frag.glsl";
+extern std::string DefaultModel;
+extern std::string ShaderVert;
+extern std::string ShaderFrag;
 } // namespace Paths
 } // namespace Config

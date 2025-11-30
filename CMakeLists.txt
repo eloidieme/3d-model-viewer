@@ -39,6 +39,7 @@ find_package(OpenGL REQUIRED)
 add_executable(main
     src/main.cpp
     src/App.cpp
+    src/Config.cpp
 
     src/Core/Window.cpp
     src/Core/Input.cpp
@@ -60,6 +61,7 @@ target_include_directories(main PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/vendor/glad/include
     ${PROJECT_SOURCE_DIR}/vendor/stb
+    ${PROJECT_SOURCE_DIR}/vendor/nlohmann
 )
 
 # --- Link Libraries to Executable ---
