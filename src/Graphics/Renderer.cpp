@@ -7,7 +7,21 @@
 #include "Graphics/Shader.hpp"
 #include "Scene/Model.hpp"
 
-void Renderer::init() { glEnable(GL_DEPTH_TEST); }
+static unsigned int s_CameraUBO = 0;
+
+void Renderer::init() {
+  glEnable(GL_DEPTH_TEST);
+
+  glGenBuffers(1, &s_CameraUBO);
+
+  glBindBuffer(GL_UNIFORM_BUFFER, s_CameraUBO);
+  glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraDataUBOLayout), nullptr,
+               GL_DYNAMIC_DRAW);
+
+  glBindBufferBase(GL_UNIFORM_BUFFER, 0, s_CameraUBO);
+
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
 
 void Renderer::clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
@@ -15,13 +29,18 @@ void Renderer::setClearColor(const glm::vec4 &color) {
   glClearColor(color.r, color.g, color.b, color.a);
 }
 
-void Renderer::beginScene(const Camera &camera, const glm::mat4 &projection,
-                          Shader &shader) {
+void Renderer::beginScene(const Camera &camera, Shader &shader) {
   shader.useShader();
 
-  shader.setUniformMat4("view", camera.getViewMatrix());
-  shader.setUniformMat4("projection", projection);
-  shader.setUniformVec3("viewPos", camera.getPosition());
+  CameraDataUBOLayout cameraData;
+  cameraData.view = camera.getViewMatrix();
+  cameraData.projection = camera.getProjectionMatrix();
+  cameraData.viewPos = camera.getPosition();
+
+  glBindBuffer(GL_UNIFORM_BUFFER, s_CameraUBO);
+  glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(CameraDataUBOLayout),
+                  &cameraData);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Renderer::endScene() {}

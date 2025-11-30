@@ -53,7 +53,7 @@ void App::run() {
     shader->setUniformVec3("lightPos", m_lightPos);
     shader->setUniformVec4("plane", m_plane);
 
-    Renderer::beginScene(m_camera, m_camera.getProjectionMatrix(), *shader);
+    Renderer::beginScene(m_camera, *shader);
     Renderer::submit(m_ourModel, m_transform, *shader);
     Renderer::endScene();
 

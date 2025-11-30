@@ -73,6 +73,13 @@ Shader::Shader(const std::string &vertexShaderPath,
     throw std::runtime_error("ERROR::SHADER::FAILED_TO_LINK_PROGRAM");
   }
 
+  unsigned int uniformBlockIndex =
+      glGetUniformBlockIndex(m_programID, "CameraData");
+
+  if (uniformBlockIndex != GL_INVALID_INDEX) {
+    glUniformBlockBinding(m_programID, uniformBlockIndex, 0);
+  }
+
   // delete shaders and close files
   glDeleteShader(vShader);
   glDeleteShader(fShader);
