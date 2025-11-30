@@ -16,8 +16,8 @@ App::App(std::filesystem::path modelPath) {
     throw std::runtime_error("ERROR::GLFW::FAILED_TO_INIT_GLFW");
   }
   Window::init();
-
   m_window = std::make_unique<Window>();
+  glfwSetInputMode(m_window->getHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   Input::init(m_window->getHandle());
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
@@ -34,7 +34,12 @@ App::App(std::filesystem::path modelPath) {
   Renderer::setClearColor({0.1f, 0.1f, 0.2f, 1.0f});
 }
 
-App::~App() { glfwTerminate(); }
+App::~App() {
+  m_ourModel.reset();
+  ResourceManager::clear();
+  m_window.reset();
+  glfwTerminate();
+}
 
 void App::run() {
   auto shader = ResourceManager::loadShader(
@@ -62,23 +67,33 @@ void App::run() {
 }
 
 void App::processInput() {
-  if (Input::isKeyPressed(Key::Escape)) {
+  if (Input::isKeyPressed(Key::Escape))
     m_isRunning = false;
+
+  if (Input::isKeyPressed(Key::Up) || Input::isKeyPressed(Key::Z))
+    m_camera.processKeyboard(FORWARD, m_deltaTime);
+  if (Input::isKeyPressed(Key::Down) || Input::isKeyPressed(Key::S))
+    m_camera.processKeyboard(BACKWARD, m_deltaTime);
+  if (Input::isKeyPressed(Key::Left) || Input::isKeyPressed(Key::Q))
+    m_camera.processKeyboard(LEFT, m_deltaTime);
+  if (Input::isKeyPressed(Key::Right) || Input::isKeyPressed(Key::D))
+    m_camera.processKeyboard(RIGHT, m_deltaTime);
+
+  auto [xpos, ypos] = Input::getMousePosition();
+
+  if (m_firstMouse) {
+    m_lastX = xpos;
+    m_lastY = ypos;
+    m_firstMouse = false;
   }
 
-  const float rotateSpeed = 90.0f * m_deltaTime;
-  if (Input::isKeyPressed(Key::Right)) {
-    m_transform.Rotation.y += rotateSpeed;
-  }
-  if (Input::isKeyPressed(Key::Left)) {
-    m_transform.Rotation.y -= rotateSpeed;
-  }
-  if (Input::isKeyPressed(Key::Up)) {
-    m_transform.Rotation.x += rotateSpeed;
-  }
-  if (Input::isKeyPressed(Key::Down)) {
-    m_transform.Rotation.x -= rotateSpeed;
-  }
+  float xoffset = xpos - m_lastX;
+  float yoffset = m_lastY - ypos;
+
+  m_lastX = xpos;
+  m_lastY = ypos;
+
+  m_camera.processMouseMovement(xoffset, yoffset);
 }
 
 void App::onEvent(Event &e) {

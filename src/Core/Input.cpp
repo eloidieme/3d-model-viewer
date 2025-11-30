@@ -12,3 +12,11 @@ bool Input::isKeyPressed(int keycode) {
   int state = glfwGetKey(s_window, keycode);
   return state == GLFW_PRESS || state == GLFW_REPEAT;
 }
+
+std::pair<double, double> Input::getMousePosition() {
+  if (!s_window)
+    return {0.0, 0.0};
+  double x, y;
+  glfwGetCursorPos(s_window, &x, &y);
+  return {x, y};
+}
