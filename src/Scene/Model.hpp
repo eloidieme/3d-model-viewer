@@ -8,16 +8,18 @@
 #include <assimp/scene.h>
 
 #include "Graphics/Mesh.hpp"
+#include "Graphics/ResourceManager.hpp"
 #include "Graphics/Texture.hpp"
 
 class Shader;
 
 class Model {
 public:
-  explicit Model(std::string modelFilePath);
+  explicit Model(std::string modelFilePath, ResourceManager &resourceManager);
   void draw(Shader &shader);
 
 private:
+  ResourceManager &m_resourceManager;
   std::vector<Mesh> m_meshes;
   std::string m_directory;
 

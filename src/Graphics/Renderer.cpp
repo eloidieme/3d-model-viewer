@@ -7,18 +7,16 @@
 #include "Graphics/Shader.hpp"
 #include "Scene/Model.hpp"
 
-static unsigned int s_CameraUBO = 0;
-
 void Renderer::init() {
   glEnable(GL_DEPTH_TEST);
 
-  glGenBuffers(1, &s_CameraUBO);
+  glGenBuffers(1, &m_CameraUBO);
 
-  glBindBuffer(GL_UNIFORM_BUFFER, s_CameraUBO);
+  glBindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
   glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraDataUBOLayout), nullptr,
                GL_DYNAMIC_DRAW);
 
-  glBindBufferBase(GL_UNIFORM_BUFFER, 0, s_CameraUBO);
+  glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_CameraUBO);
 
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
@@ -37,7 +35,7 @@ void Renderer::beginScene(const Camera &camera, Shader &shader) {
   cameraData.projection = camera.getProjectionMatrix();
   cameraData.viewPos = camera.getPosition();
 
-  glBindBuffer(GL_UNIFORM_BUFFER, s_CameraUBO);
+  glBindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
   glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(CameraDataUBOLayout),
                   &cameraData);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);

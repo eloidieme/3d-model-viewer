@@ -7,6 +7,8 @@
 #include "Config.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Graphics/ResourceManager.hpp"
 
 class Event;
 class Model;
@@ -19,6 +21,9 @@ public:
   void run();
 
 private:
+  ResourceManager m_resourceManager;
+  Renderer m_renderer;
+
   float m_deltaTime = 0.0f;
   float m_lastFrame = 0.0f;
 

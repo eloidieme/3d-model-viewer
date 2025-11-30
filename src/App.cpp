@@ -22,27 +22,27 @@ App::App(std::filesystem::path modelPath) {
   Input::init(m_window->getHandle());
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
 
-  m_ourModel = std::make_shared<Model>(modelPath);
+  m_renderer.init();
+  m_renderer.setClearColor(Config::Render::ClearColor);
+
+  m_ourModel = std::make_shared<Model>(modelPath, m_resourceManager);
   m_transform.Position = glm::vec3(0);
   m_transform.Rotation = glm::vec3(0);
   m_transform.Scale = glm::vec3(1);
 
   m_camera.setAspectRatio((float)m_window->getWidth(),
                           (float)m_window->getHeight());
-
-  Renderer::init();
-  Renderer::setClearColor(Config::Render::ClearColor);
 }
 
 App::~App() {
   m_ourModel.reset();
-  ResourceManager::clear();
+  m_resourceManager.clear();
   m_window.reset();
   glfwTerminate();
 }
 
 void App::run() {
-  auto shader = ResourceManager::loadShader(
+  auto shader = m_resourceManager.loadShader(
       "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
 
   while (m_isRunning) {
@@ -52,15 +52,15 @@ void App::run() {
 
     processInput();
 
-    Renderer::clear();
+    m_renderer.clear();
 
     shader->useShader();
     shader->setUniformVec3("lightPos", m_lightPos);
     shader->setUniformVec4("plane", m_plane);
 
-    Renderer::beginScene(m_camera, *shader);
-    Renderer::submit(m_ourModel, m_transform, *shader);
-    Renderer::endScene();
+    m_renderer.beginScene(m_camera, *shader);
+    m_renderer.submit(m_ourModel, m_transform, *shader);
+    m_renderer.endScene();
 
     m_window->onUpdate();
   }

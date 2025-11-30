@@ -3,8 +3,9 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-class Model;
-class Shader;
+#include "Graphics/Shader.hpp"
+#include "Scene/Model.hpp"
+
 class Camera;
 class Transform;
 
@@ -17,15 +18,18 @@ struct CameraDataUBOLayout {
 
 class Renderer {
 public:
-  static void init();
+  void init();
 
-  static void clear();
-  static void setClearColor(const glm::vec4 &color);
+  void clear();
+  void setClearColor(const glm::vec4 &color);
 
-  static void beginScene(const Camera &camera, Shader &shader);
+  void beginScene(const Camera &camera, Shader &shader);
 
-  static void endScene();
+  void endScene();
 
-  static void submit(const std::shared_ptr<Model> &model, Transform &transform,
-                     Shader &shader);
+  void submit(const std::shared_ptr<Model> &model, Transform &transform,
+              Shader &shader);
+
+private:
+  unsigned int m_CameraUBO = 0;
 };

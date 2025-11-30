@@ -1,9 +1,13 @@
 #include "Scene/Model.hpp"
 #include "Graphics/ResourceManager.hpp"
 
+#include <filesystem>
 #include <glm/glm.hpp>
 
-Model::Model(std::string modelFilePath) { loadModel(modelFilePath); }
+Model::Model(std::string modelFilePath, ResourceManager &resourceManager)
+    : m_resourceManager(resourceManager) {
+  loadModel(modelFilePath);
+}
 
 void Model::draw(Shader &shader) {
   for (unsigned int i = 0; i < m_meshes.size(); i++) {
@@ -21,7 +25,8 @@ void Model::loadModel(std::string path) {
     throw std::runtime_error("ERROR::MODEL::FAILED_TO_LOAD_SCENE");
   }
 
-  m_directory = path.substr(0, path.find_last_of('/'));
+  std::filesystem::path p(path);
+  m_directory = p.parent_path().string();
 
   processNode(scene->mRootNode, scene);
 }
@@ -97,10 +102,12 @@ Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
     aiString str;
     mat->GetTexture(type, i, &str);
 
-    std::string fullPath = m_directory + '/' + str.C_Str();
+    std::filesystem::path directory(m_directory);
+    std::filesystem::path fileName(str.C_Str());
+    std::string fullPath = (directory / fileName).string();
 
     std::shared_ptr<Texture> texture =
-        ResourceManager::loadTexture(fullPath, typeName);
+        m_resourceManager.loadTexture(fullPath, typeName);
     ret.push_back(texture);
   }
 
