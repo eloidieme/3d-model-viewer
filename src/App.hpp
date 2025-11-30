@@ -28,7 +28,6 @@ private:
 
   glm::vec3 m_lightPos{2.0f, 2.0f, 2.0f};
   glm::vec4 m_plane{0.5f, 0.5f, 0.0f, -0.5f};
-  glm::mat4 m_projection;
 
   std::shared_ptr<Model> m_ourModel;
   std::unique_ptr<Window> m_window;

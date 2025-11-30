@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 
 #include "Core/Event.hpp"
+#include "Core/Input.hpp"
+#include "Core/KeyCodes.hpp"
 #include "Core/Window.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/ResourceManager.hpp"
@@ -16,6 +18,8 @@ App::App(std::filesystem::path modelPath) {
   Window::init();
 
   m_window = std::make_unique<Window>();
+
+  Input::init(m_window->getHandle());
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
 
   m_ourModel = std::make_shared<Model>(modelPath);
@@ -23,9 +27,8 @@ App::App(std::filesystem::path modelPath) {
   m_transform.Rotation = glm::vec3(0);
   m_transform.Scale = glm::vec3(1);
 
-  m_projection = glm::perspective(
-      glm::radians(45.f), (float)m_window->getWidth() / m_window->getHeight(),
-      0.1f, 100.f);
+  m_camera.setAspectRatio((float)m_window->getWidth(),
+                          (float)m_window->getHeight());
 
   Renderer::init();
   Renderer::setClearColor({0.1f, 0.1f, 0.2f, 1.0f});
@@ -50,7 +53,7 @@ void App::run() {
     shader->setUniformVec3("lightPos", m_lightPos);
     shader->setUniformVec4("plane", m_plane);
 
-    Renderer::beginScene(m_camera, m_projection, *shader);
+    Renderer::beginScene(m_camera, m_camera.getProjectionMatrix(), *shader);
     Renderer::submit(m_ourModel, m_transform, *shader);
     Renderer::endScene();
 
@@ -59,23 +62,22 @@ void App::run() {
 }
 
 void App::processInput() {
-  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||
-      glfwWindowShouldClose(m_window->getHandle())) {
+  if (Input::isKeyPressed(Key::Escape)) {
     m_isRunning = false;
   }
 
   const float rotateSpeed = 90.0f * m_deltaTime;
-  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+  if (Input::isKeyPressed(Key::Right)) {
     m_transform.Rotation.y += rotateSpeed;
   }
-  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+  if (Input::isKeyPressed(Key::Left)) {
     m_transform.Rotation.y -= rotateSpeed;
   }
-  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_UP) == GLFW_PRESS) {
-    m_transform.Rotation.x -= rotateSpeed;
-  }
-  if (glfwGetKey(m_window->getHandle(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+  if (Input::isKeyPressed(Key::Up)) {
     m_transform.Rotation.x += rotateSpeed;
+  }
+  if (Input::isKeyPressed(Key::Down)) {
+    m_transform.Rotation.x -= rotateSpeed;
   }
 }
 
@@ -92,9 +94,5 @@ void App::onEvent(Event &e) {
 }
 
 void App::onResize(int width, int height) {
-  if (height == 0)
-    height = 1;
-
-  m_projection = glm::perspective(glm::radians(45.f),
-                                  (float)width / (float)height, 0.1f, 100.f);
+  m_camera.setAspectRatio((float)width, (float)height);
 }

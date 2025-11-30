@@ -42,7 +42,7 @@ Texture::Texture(const std::string &textureFilePath) {
 }
 Texture::~Texture() { glDeleteTextures(1, &m_textureID); };
 
-Texture::Texture(Texture &&other) {
+Texture::Texture(Texture &&other) noexcept {
   m_textureID = other.m_textureID;
   m_width = other.m_width;
   m_height = other.m_height;
@@ -50,7 +50,7 @@ Texture::Texture(Texture &&other) {
 
   other.m_textureID = 0;
 }
-Texture &Texture::operator=(Texture &&other) {
+Texture &Texture::operator=(Texture &&other) noexcept {
 
   if (this != &other) {
     glDeleteTextures(1, &m_textureID);

@@ -43,13 +43,13 @@ Window::Window(unsigned int width, unsigned int height,
 
 Window::~Window() { glfwDestroyWindow(m_nativeHandle); };
 
-Window::Window(Window &&other) {
+Window::Window(Window &&other) noexcept {
   m_nativeHandle = std::exchange(other.m_nativeHandle, nullptr);
   m_properties.width = other.m_properties.width;
   m_properties.height = other.m_properties.height;
   m_properties.title = other.m_properties.title;
 };
-Window &Window::operator=(Window &&other) {
+Window &Window::operator=(Window &&other) noexcept {
   if (m_nativeHandle != nullptr) {
     glfwDestroyWindow(m_nativeHandle);
   }

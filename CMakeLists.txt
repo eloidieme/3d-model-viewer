@@ -41,6 +41,7 @@ add_executable(main
     src/App.cpp
 
     src/Core/Window.cpp
+    src/Core/Input.cpp
 
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp

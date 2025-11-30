@@ -12,8 +12,8 @@ public:
   Texture(const Texture &other) = delete;
   Texture &operator=(const Texture &other) = delete;
 
-  Texture(Texture &&other);
-  Texture &operator=(Texture &&other);
+  Texture(Texture &&other) noexcept;
+  Texture &operator=(Texture &&other) noexcept;
 
   void bind(unsigned int slot = 0);
 

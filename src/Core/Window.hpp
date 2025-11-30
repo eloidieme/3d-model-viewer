@@ -24,8 +24,8 @@ public:
   Window(const Window &other) = delete;
   Window &operator=(const Window &other) = delete;
 
-  Window(Window &&other);
-  Window &operator=(Window &&other);
+  Window(Window &&other) noexcept;
+  Window &operator=(Window &&other) noexcept;
 
   static void init();
   void onUpdate();

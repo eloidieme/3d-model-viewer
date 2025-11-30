@@ -20,7 +20,7 @@ Mesh::~Mesh() {
   glDeleteVertexArrays(1, &VAO);
 }
 
-Mesh::Mesh(Mesh &&other) {
+Mesh::Mesh(Mesh &&other) noexcept {
   m_vertices = std::move(other.m_vertices);
   m_indices = std::move(other.m_indices);
   m_textures = std::move(other.m_textures);
@@ -34,7 +34,7 @@ Mesh::Mesh(Mesh &&other) {
   other.EBO = 0;
 }
 
-Mesh &Mesh::operator=(Mesh &&other) {
+Mesh &Mesh::operator=(Mesh &&other) noexcept {
   if (this != &other) {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
@@ -58,24 +58,34 @@ Mesh &Mesh::operator=(Mesh &&other) {
 
 void Mesh::draw(Shader &shader) {
   shader.useShader();
+
+  unsigned int diffuseNr = 1;
+  unsigned int specularNr = 1;
+  unsigned int normalNr = 1;
+  unsigned int heightNr = 1;
+
   for (unsigned int i = 0; i < m_textures.size(); i++) {
-    unsigned int slot = 0;
-    switch (m_textures[i]->getType()) {
-    case TextureType::Diffuse:
-      slot = 0;
-      break;
-    case TextureType::Specular:
-      slot = 1;
-      break;
-    case TextureType::Normal:
-      slot = 2;
-      break;
-    default:
-      slot = 0;
-      break;
+    TextureType type = m_textures[i]->getType();
+    std::string number;
+    std::string name;
+
+    if (type == TextureType::Diffuse) {
+      name = "texture_diffuse";
+      number = std::to_string(diffuseNr++);
+    } else if (type == TextureType::Specular) {
+      name = "texture_specular";
+      number = std::to_string(specularNr++);
+    } else if (type == TextureType::Normal) {
+      name = "texture_normal";
+      number = std::to_string(normalNr++);
+    } else if (type == TextureType::Height) {
+      name = "texture_height";
+      number = std::to_string(heightNr++);
     }
 
-    m_textures[i]->bind(slot);
+    shader.setUniformInt((name + number).c_str(), i);
+
+    m_textures[i]->bind(i);
   }
 
   glBindVertexArray(VAO);
