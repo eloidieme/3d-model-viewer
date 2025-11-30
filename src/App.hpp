@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "Config.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
 
@@ -21,8 +22,8 @@ private:
   float m_deltaTime = 0.0f;
   float m_lastFrame = 0.0f;
 
-  float m_lastX = 1280.0f / 2.0f;
-  float m_lastY = 960.0f / 2.0f;
+  float m_lastX = static_cast<float>(Config::Window::Width) / 2.0f;
+  float m_lastY = static_cast<float>(Config::Window::Height) / 2.0f;
   bool m_firstMouse = true;
 
   bool m_isRunning = true;
@@ -30,8 +31,8 @@ private:
   struct Transform m_transform;
   Camera m_camera;
 
-  glm::vec3 m_lightPos{2.0f, 2.0f, 2.0f};
-  glm::vec4 m_plane{0.5f, 0.5f, 0.0f, -0.5f};
+  glm::vec3 m_lightPos{Config::Render::LightPosition};
+  glm::vec4 m_plane{Config::Render::ClippingPlane};
 
   std::unique_ptr<Window> m_window;
   std::shared_ptr<Model> m_ourModel;

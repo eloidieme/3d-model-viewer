@@ -31,7 +31,7 @@ App::App(std::filesystem::path modelPath) {
                           (float)m_window->getHeight());
 
   Renderer::init();
-  Renderer::setClearColor({0.1f, 0.1f, 0.2f, 1.0f});
+  Renderer::setClearColor(Config::Render::ClearColor);
 }
 
 App::~App() {
@@ -43,7 +43,7 @@ App::~App() {
 
 void App::run() {
   auto shader = ResourceManager::loadShader(
-      "default", "assets/shaders/vert.glsl", "assets/shaders/frag.glsl");
+      "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
 
   while (m_isRunning) {
     float currentFrame = static_cast<float>(glfwGetTime());

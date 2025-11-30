@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.hpp"
+
 #include <functional>
 #include <string>
 
@@ -18,7 +20,9 @@ public:
   using EventCallbackFn = std::function<void(Event &)>;
 
   Window(unsigned int width, unsigned int height, const std::string &title);
-  Window() : Window(1280, 960, "3D Model Viewer") {};
+  Window()
+      : Window(Config::Window::Width, Config::Window::Height,
+               Config::Window::Title) {};
   ~Window();
 
   Window(const Window &other) = delete;

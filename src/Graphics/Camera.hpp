@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -9,11 +11,12 @@ enum Camera_Movement { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
 class Camera {
 
 public:
-  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f),
+  Camera(glm::vec3 position = Config::Camera::StartPosition,
          glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f,
          float pitch = 0.0f)
-      : m_front(glm::vec3(0.0f, 0.0f, -1.0f)), m_movementSpeed(2.5f),
-        m_mouseSensitivity(0.1f) {
+      : m_front(glm::vec3(0.0f, 0.0f, -1.0f)),
+        m_movementSpeed(Config::Camera::MovementSpeed),
+        m_mouseSensitivity(Config::Camera::Sensitivity) {
     m_position = position;
     m_worldUp = up;
     m_yaw = yaw;
@@ -64,7 +67,8 @@ public:
 
   void setAspectRatio(float width, float height) {
     m_projection =
-        glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.f);
+        glm::perspective(glm::radians(Config::Camera::Fov), width / height,
+                         Config::Camera::NearPlane, Config::Camera::FarPlane);
   }
 
 private:
