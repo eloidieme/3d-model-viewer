@@ -7,6 +7,7 @@
 #include "Config.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
+#include "Graphics/Mesh.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/ResourceManager.hpp"
 #include "Graphics/Shader.hpp"
@@ -44,6 +45,9 @@ private:
 
   std::shared_ptr<Model> m_ourModel;
   std::shared_ptr<Shader> m_shader;
+
+  std::unique_ptr<Mesh> m_planeVisualizerMesh;
+  std::shared_ptr<Shader> m_planeShader;
 
   void processInput();
   void onResize(int width, int height);

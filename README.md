@@ -2,11 +2,15 @@
 
 A modern, high-performance 3D model viewer written in C++17 using OpenGL 3.3+.
 
-Deltaviewer is designed with a clean architecture, supporting hot-reloadable shaders, runtime configuration via JSON, and efficient mesh rendering. It leverages **Assimp** for broad model format support, **GLFW** for windowing, and **GLM** for mathematics.
+Deltaviewer is designed with a clean architecture, supporting hot-reloadable shaders, runtime configuration via JSON, and efficient mesh rendering. It leverages **Assimp** for broad model format support, **GLFW** for windowing, **GLM** for mathematics, and **Dear ImGui** for the user interface.
 
 ## Features
 
 - **Model Support:** Loads varied 3D formats (OBJ, FBX, GLTF, etc.) via the Open Asset Import Library (Assimp).
+- **Interactive UI:** Real-time control over render settings, lighting, and camera statistics via a built-in ImGui dashboard.
+- **Advanced Clipping System:** - Add and manipulate up to 8 arbitrary clipping planes in real-time.
+  - Interactive controls for plane normals and distance.
+  - **Visual Debugging:** Semi-transparent plane visualizers in the 3D scene to assist with positioning.
 - **Shader Hot-Reloading:** Edit `.glsl` shader files and press `R` to reload them instantly without restarting the app.
 - **Runtime Configuration:** Modify window resolution, camera sensitivity, and render settings via `config.json` without recompiling.
 - **Performance:** Optimized mesh loading with move semantics and cached transform matrices.
@@ -73,6 +77,14 @@ By default, the viewer loads the model specified in `config.json`. You can also 
 
 _Note: WASD/ZQSD support is handled automatically to support QWERTY and AZERTY layouts._
 
+### UI Overlay
+
+The application features a "Settings" window that allows you to:
+
+- View application stats (FPS).
+- Change the clear color and light position.
+- **Clipping Planes**: Dynamically add, remove, and adjust clipping planes to inspect the interior of your models.
+
 ## Configuration (`config.json`)
 
 You can customize the application settings by editing `config.json` in the root directory. No recompilation is needed.
@@ -111,7 +123,7 @@ You can customize the application settings by editing `config.json` in the root 
   - **Core/**: Windowing, Input handling, Events, Transforms.
   - **Graphics/**: OpenGL wrappers (Renderer, Shader, Texture, Mesh).
   - **Scene/**: Model loading and node processing.
-  - **App.cpp**: Main application loop and logic.
+  - **App.cpp**: Main application loop, UI logic, and rendering pipeline.
   - **Config.cpp**: JSON parsing and global settings.
-- **assets/**: Shaders and default models.
-- **vendor/**: Third-party libraries (GLAD, stb_image, nlohmann_json).
+- **assets/**: Shaders (including new plane visualization shaders) and default models.
+- **vendor/**: Third-party libraries (GLAD, stb_image, nlohmann_json, ImGui).

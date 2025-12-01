@@ -19,6 +19,8 @@
   "Paths": {
     "DefaultModel": "assets/models/backpack/backpack.obj",
     "ShaderVert": "assets/shaders/vert.glsl",
-    "ShaderFrag": "assets/shaders/frag.glsl"
+    "ShaderFrag": "assets/shaders/frag.glsl",
+    "PlaneShaderVert": "assets/shaders/plane_vert.glsl",
+    "PlaneShaderFrag": "assets/shaders/plane_frag.glsl"
   }
 }

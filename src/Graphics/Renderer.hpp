@@ -29,6 +29,7 @@ public:
 
   void submit(const std::shared_ptr<Model> &model, Transform &transform,
               Shader &shader);
+  void submit(Mesh &mesh, const glm::mat4 &modelMatrix, Shader &shader);
 
 private:
   unsigned int m_CameraUBO = 0;

@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 
 #include "Core/Event.hpp"
 #include "Core/Input.hpp"
@@ -46,6 +48,19 @@ App::App(std::filesystem::path modelPath) {
 
   m_shader = m_resourceManager.loadShader("default", Config::Paths::ShaderVert,
                                           Config::Paths::ShaderFrag);
+  m_planeShader = m_resourceManager.loadShader(
+      "plane", Config::Paths::PlaneShaderVert, Config::Paths::PlaneShaderFrag);
+
+  // Plane viz quad
+  std::vector<Vertex> vertices = {
+      {{-1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}, // Bottom-Left
+      {{1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},  // Bottom-Right
+      {{1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}, // Top-Right
+      {{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}} // Top-Left
+  };
+  std::vector<unsigned int> indices = {0, 1, 2, 2, 3, 0};
+  std::vector<std::shared_ptr<Texture>> textures;
+  m_planeVisualizerMesh = std::make_unique<Mesh>(vertices, indices, textures);
 
   m_camera.setAspectRatio((float)m_window->getWidth(),
                           (float)m_window->getHeight());
@@ -88,6 +103,37 @@ void App::run() {
 
     m_renderer.beginScene(m_camera, *m_shader);
     m_renderer.submit(m_ourModel, m_transform, *m_shader);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
+
+    m_planeShader->useShader();
+
+    m_planeShader->setUniformVec4("u_Color",
+                                  glm::vec4(0.7f, 0.7f, 0.7f, 0.10f));
+
+    for (const auto &plane : m_clippingPlanes) {
+      glm::vec3 normal(plane.x, plane.y, plane.z);
+      float dist = plane.w;
+
+      glm::vec3 position = -normal * dist;
+      glm::quat rotation =
+          glm::rotation(glm::vec3(0.0f, 1.0f, 0.0f), glm::normalize(normal));
+
+      glm::vec3 scale(5.0f);
+
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, position);
+      model = model * glm::toMat4(rotation);
+      model = glm::scale(model, scale);
+
+      m_renderer.submit(*m_planeVisualizerMesh, model, *m_planeShader);
+    }
+
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+
     m_renderer.endScene();
 
     ImGui::Begin("Settings");

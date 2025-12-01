@@ -50,6 +50,8 @@ namespace Paths {
 std::string DefaultModel = "assets/models/backpack/backpack.obj";
 std::string ShaderVert = "assets/shaders/vert.glsl";
 std::string ShaderFrag = "assets/shaders/frag.glsl";
+std::string PlaneShaderVert = "assets/shaders/plane_vert.glsl";
+std::string PlaneShaderFrag = "assets/shaders/plane_frag.glsl";
 } // namespace Paths
 
 void load(const std::string &path) {

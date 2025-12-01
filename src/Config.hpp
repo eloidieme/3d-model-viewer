@@ -30,5 +30,7 @@ namespace Paths {
 extern std::string DefaultModel;
 extern std::string ShaderVert;
 extern std::string ShaderFrag;
+extern std::string PlaneShaderVert;
+extern std::string PlaneShaderFrag;
 } // namespace Paths
 } // namespace Config

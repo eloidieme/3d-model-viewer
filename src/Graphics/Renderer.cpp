@@ -51,3 +51,10 @@ void Renderer::submit(const std::shared_ptr<Model> &model, Transform &transform,
     model->draw(shader);
   }
 }
+
+void Renderer::submit(Mesh &mesh, const glm::mat4 &modelMatrix,
+                      Shader &shader) {
+  shader.useShader();
+  shader.setUniformMat4("model", modelMatrix);
+  mesh.draw(shader);
+}
