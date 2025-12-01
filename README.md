@@ -98,8 +98,7 @@ You can customize the application settings by editing `config.json` in the root 
   },
   "Render": {
     "ClearColor": [0.1, 0.1, 0.2, 1.0],
-    "LightPosition": [2.0, 2.0, 2.0],
-    "ClippingPlane": [0.5, 0.5, 0.0, -0.5]
+    "LightPosition": [2.0, 2.0, 2.0]
   },
   "Camera": {
     "MovementSpeed": 2.5,
@@ -112,7 +111,9 @@ You can customize the application settings by editing `config.json` in the root 
   "Paths": {
     "DefaultModel": "assets/models/backpack/backpack.obj",
     "ShaderVert": "assets/shaders/vert.glsl",
-    "ShaderFrag": "assets/shaders/frag.glsl"
+    "ShaderFrag": "assets/shaders/frag.glsl",
+    "PlaneShaderVert": "assets/shaders/plane_vert.glsl",
+    "PlaneShaderFrag": "assets/shaders/plane_frag.glsl"
   }
 }
 ```
