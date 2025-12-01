@@ -15,7 +15,6 @@ extern std::string Title;
 namespace Render {
 extern glm::vec4 ClearColor;
 extern glm::vec3 LightPosition;
-extern glm::vec4 ClippingPlane;
 } // namespace Render
 
 namespace Camera {

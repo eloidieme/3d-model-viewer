@@ -35,7 +35,6 @@ std::string Title = "Deltaviewer";
 namespace Render {
 glm::vec4 ClearColor = {0.1f, 0.1f, 0.2f, 1.0f};
 glm::vec3 LightPosition = {2.0f, 2.0f, 2.0f};
-glm::vec4 ClippingPlane = {0.5f, 0.5f, 0.0f, -0.5f};
 } // namespace Render
 
 namespace Camera {
@@ -81,8 +80,6 @@ void load(const std::string &path) {
         r["ClearColor"].get_to(Render::ClearColor);
       if (r.contains("LightPosition"))
         r["LightPosition"].get_to(Render::LightPosition);
-      if (r.contains("ClippingPlane"))
-        r["ClippingPlane"].get_to(Render::ClippingPlane);
     }
 
     if (j.contains("Camera")) {

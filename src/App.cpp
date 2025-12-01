@@ -78,7 +78,13 @@ void App::run() {
 
     m_shader->useShader();
     m_shader->setUniformVec3("lightPos", m_lightPos);
-    m_shader->setUniformVec4("plane", m_plane);
+
+    m_shader->setUniformInt("u_ActiveClippingPlanes",
+                            static_cast<int>(m_clippingPlanes.size()));
+    for (size_t i = 0; i < m_clippingPlanes.size(); i++) {
+      std::string uniformName = "u_ClippingPlanes[" + std::to_string(i) + "]";
+      m_shader->setUniformVec4(uniformName, m_clippingPlanes[i]);
+    }
 
     m_renderer.beginScene(m_camera, *m_shader);
     m_renderer.submit(m_ourModel, m_transform, *m_shader);
@@ -96,6 +102,44 @@ void App::run() {
       m_renderer.setClearColor(Config::Render::ClearColor);
     }
     ImGui::DragFloat3("Light Position", &m_lightPos.x, 0.1f);
+
+    ImGui::Separator();
+    ImGui::Text("Clipping Planes");
+
+    if (m_clippingPlanes.size() < 8) {
+      if (ImGui::Button("Add Clipping Plane")) {
+        m_clippingPlanes.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+      }
+    } else {
+      ImGui::TextDisabled("Max clipping planes reached (8)");
+    }
+
+    for (size_t i = 0; i < m_clippingPlanes.size(); i++) {
+      ImGui::PushID(static_cast<int>(i));
+
+      if (ImGui::CollapsingHeader(("Plane " + std::to_string(i)).c_str(),
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::DragFloat3("Normal (XYZ)", &m_clippingPlanes[i].x, 0.01f, -1.0f,
+                          1.0f);
+        ImGui::DragFloat("Distance (W)", &m_clippingPlanes[i].w, 0.1f);
+
+        if (ImGui::Button("Normalize")) {
+          glm::vec3 normal(m_clippingPlanes[i]);
+          if (glm::length(normal) > 0.0001f) {
+            normal = glm::normalize(normal);
+            m_clippingPlanes[i].x = normal.x;
+            m_clippingPlanes[i].y = normal.y;
+            m_clippingPlanes[i].z = normal.z;
+          }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Remove")) {
+          m_clippingPlanes.erase(m_clippingPlanes.begin() + i);
+          i--;
+        }
+      }
+      ImGui::PopID();
+    }
 
     ImGui::Separator();
     ImGui::Text("Camera");

@@ -36,7 +36,7 @@ private:
   Camera m_camera;
 
   glm::vec3 m_lightPos{Config::Render::LightPosition};
-  glm::vec4 m_plane{Config::Render::ClippingPlane};
+  std::vector<glm::vec4> m_clippingPlanes;
 
   std::unique_ptr<Window> m_window;
   ResourceManager m_resourceManager;
