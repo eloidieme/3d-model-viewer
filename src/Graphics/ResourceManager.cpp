@@ -1,7 +1,5 @@
 #include "Graphics/ResourceManager.hpp"
 
-#include <iostream>
-
 std::shared_ptr<Texture> ResourceManager::loadTexture(const std::string &path,
                                                       TextureType typeName) {
   if (m_textures.find(path) != m_textures.end()) {

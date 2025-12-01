@@ -91,6 +91,8 @@ add_executable(main
     vendor/glad/src/glad.c
 )
 
+target_compile_definitions(main PRIVATE $<$<CONFIG:Debug>:DEBUG>)
+
 target_include_directories(main PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/vendor/glad/include

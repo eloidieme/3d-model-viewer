@@ -31,3 +31,24 @@ private:
 #define LOG_WARN(...) ::Log::getClientLogger()->warn(__VA_ARGS__)
 #define LOG_ERROR(...) ::Log::getClientLogger()->error(__VA_ARGS__)
 #define LOG_CRITICAL(...) ::Log::getClientLogger()->critical(__VA_ARGS__)
+
+#ifdef DEBUG
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#define DEBUG_BREAK __debugbreak()
+#elif defined(__linux__) || defined(__APPLE__)
+#define DEBUG_BREAK __builtin_trap()
+#else
+#define DEBUG_BREAK
+#endif
+
+#define ASSERT(x, ...)                                                         \
+  {                                                                            \
+    if (!(x)) {                                                                \
+      LOG_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__);                    \
+      LOG_CORE_ERROR("File: {0}, Line: {1}", __FILE__, __LINE__);              \
+      DEBUG_BREAK;                                                             \
+    }                                                                          \
+  }
+#else
+#define ASSERT(x, ...)
+#endif

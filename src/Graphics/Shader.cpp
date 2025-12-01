@@ -1,8 +1,9 @@
 #include "Graphics/Shader.hpp"
+#include "Core/Log.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 #include <glad/glad.h>
@@ -10,11 +11,9 @@
 
 Shader::Shader(const std::string &vertexShaderPath,
                const std::string &fragmentShaderPath) {
-  // For error handling
   int success;
   char infoLog[512];
 
-  // open the files using the path
   std::ifstream vShaderFile, fShaderFile;
   vShaderFile.open(vertexShaderPath);
   fShaderFile.open(fragmentShaderPath);
@@ -27,26 +26,24 @@ Shader::Shader(const std::string &vertexShaderPath,
         "ERROR::FILE::FAILED_TO_OPEN_FRAGMENT_SHADER_SOURCE");
   }
 
-  // init streams and perform a buffered read from the files
   std::stringstream vShaderStream, fShaderStream;
   vShaderStream << vShaderFile.rdbuf();
   fShaderStream << fShaderFile.rdbuf();
 
-  // convert streams into strings
   std::string vShaderSourceStr = vShaderStream.str();
   std::string fShaderSourceStr = fShaderStream.str();
 
   const char *vShaderSource = vShaderSourceStr.c_str();
   const char *fShaderSource = fShaderSourceStr.c_str();
 
-  // create and compile shaders
   unsigned int vShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vShader, 1, &vShaderSource, nullptr);
   glCompileShader(vShader);
   glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(vShader, 512, nullptr, infoLog);
-    std::cerr << infoLog << std::endl;
+    LOG_CORE_ERROR("Vertex Shader Compile Error ({0}):\n{1}", vertexShaderPath,
+                   infoLog);
     throw std::runtime_error("ERROR::SHADER::FAILED_TO_COMPILE_VERTEX_SHADER");
   }
 
@@ -56,12 +53,12 @@ Shader::Shader(const std::string &vertexShaderPath,
   glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(fShader, 512, nullptr, infoLog);
-    std::cerr << infoLog << std::endl;
+    LOG_CORE_ERROR("Fragment Shader Compile Error ({0}):\n{1}",
+                   fragmentShaderPath, infoLog);
     throw std::runtime_error(
         "ERROR::SHADER::FAILED_TO_COMPILE_FRAGMENT_SHADER");
   }
 
-  // create program and link
   m_programID = glCreateProgram();
   glAttachShader(m_programID, vShader);
   glAttachShader(m_programID, fShader);
@@ -69,7 +66,7 @@ Shader::Shader(const std::string &vertexShaderPath,
   glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
   if (!success) {
     glGetProgramInfoLog(m_programID, 512, nullptr, infoLog);
-    std::cerr << infoLog << std::endl;
+    LOG_CORE_ERROR("Shader Link Error:\n{0}", infoLog);
     throw std::runtime_error("ERROR::SHADER::FAILED_TO_LINK_PROGRAM");
   }
 
@@ -80,7 +77,6 @@ Shader::Shader(const std::string &vertexShaderPath,
     glUniformBlockBinding(m_programID, uniformBlockIndex, 0);
   }
 
-  // delete shaders and close files
   glDeleteShader(vShader);
   glDeleteShader(fShader);
 
@@ -98,8 +94,7 @@ int Shader::getUniformLocation(const std::string &name) const {
 
   int location = glGetUniformLocation(m_programID, name.c_str());
   if (location == -1) {
-    std::cerr << "WARNING: Uniform '" << name << "' doesn't exist!"
-              << std::endl;
+    LOG_CORE_WARN("Uniform '{0}' not found or unused in shader!", name);
   }
 
   m_uniformLocationCache[name] = location;

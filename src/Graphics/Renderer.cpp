@@ -1,14 +1,16 @@
 #include "Graphics/Renderer.hpp"
-
-#include <glad/glad.h>
-
+#include "Core/Log.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
 #include "Graphics/Shader.hpp"
 #include "Scene/Model.hpp"
 
+#include <glad/glad.h>
+
 void Renderer::init() {
   glEnable(GL_DEPTH_TEST);
+
+  LOG_CORE_INFO("Renderer initialized (Depth Test: ENABLED)");
 
   glGenBuffers(1, &m_CameraUBO);
 

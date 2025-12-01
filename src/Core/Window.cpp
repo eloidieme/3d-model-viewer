@@ -1,22 +1,27 @@
 #include "Core/Window.hpp"
-
-#include <stdexcept>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "Core/Event.hpp"
+#include "Core/Log.hpp"
+
+#include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
+#include <stdexcept>
 
 Window::Window(unsigned int width, unsigned int height,
                const std::string &title) {
   m_properties.width = width;
   m_properties.height = height;
   m_properties.title = title;
+
+  LOG_CORE_INFO("Creating Window {0} ({1}x{2})", title, width, height);
+
   m_nativeHandle =
       glfwCreateWindow(m_properties.width, m_properties.height,
                        m_properties.title.c_str(), nullptr, nullptr);
   if (m_nativeHandle == nullptr) {
     throw std::runtime_error("ERROR::WINDOW::FAILED_TO_CREATE_WINDOW");
   }
+
   glfwSetWindowUserPointer(m_nativeHandle, this);
   glfwMakeContextCurrent(m_nativeHandle);
 
@@ -39,6 +44,8 @@ Window::Window(unsigned int width, unsigned int height,
       instance->m_eventCallback(event);
     }
   });
+
+  LOG_CORE_INFO("Window initialized successfully");
 }
 
 Window::~Window() { glfwDestroyWindow(m_nativeHandle); };

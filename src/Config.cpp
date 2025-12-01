@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "Core/Log.hpp"
 
 #include "nlohmann/json.hpp"
 #include <fstream>
@@ -57,8 +58,7 @@ std::string PlaneShaderFrag = "assets/shaders/plane_frag.glsl";
 void load(const std::string &path) {
   std::ifstream file(path);
   if (!file.is_open()) {
-    std::cout << "Config: Could not find " << path << ". Using defaults."
-              << std::endl;
+    LOG_CORE_WARN("Config: Could not find {0}. Using defaults.", path);
     return;
   }
 
@@ -110,10 +110,10 @@ void load(const std::string &path) {
         Paths::ShaderFrag = p["ShaderFrag"];
     }
 
-    std::cout << "Config: Loaded " << path << " successfully." << std::endl;
+    LOG_CORE_INFO("Config: Loaded {0} successfully.", path);
 
   } catch (const std::exception &e) {
-    std::cerr << "Config: Error parsing JSON: " << e.what() << std::endl;
+    LOG_CORE_ERROR("Config: Error parsing JSON: {0}", e.what());
   }
 }
 } // namespace Config

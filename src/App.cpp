@@ -1,7 +1,5 @@
 #include "App.hpp"
 
-#include <iostream>
-
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "imgui.h"
@@ -13,6 +11,7 @@
 #include "Core/Event.hpp"
 #include "Core/Input.hpp"
 #include "Core/KeyCodes.hpp"
+#include "Core/Log.hpp"
 #include "Core/Window.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/ResourceManager.hpp"
@@ -39,10 +38,10 @@ App::App(std::filesystem::path modelPath) {
   float xscale, yscale;
   glfwGetWindowContentScale(m_window->getHandle(), &xscale, &yscale);
   float scale = xscale;
-  
+
   io.Fonts->AddFontDefault();
   io.FontGlobalScale = scale;
-  
+
   ImGuiStyle &style = ImGui::GetStyle();
   style.ScaleAllSizes(scale);
 
@@ -250,7 +249,7 @@ void App::processInput() {
   static bool isRPressed = false;
   if (Input::isKeyPressed(KeyCode::R)) {
     if (!isRPressed) {
-      std::cout << "Reloading Shaders..." << std::endl;
+      LOG_INFO("Reloading Shaders...");
 
       m_resourceManager.clear();
 
@@ -259,9 +258,9 @@ void App::processInput() {
             "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
 
         m_shader = newShader;
-        std::cout << "Shader compilation successful!" << std::endl;
+        LOG_INFO("Shader compilation successful");
       } catch (const std::exception &e) {
-        std::cerr << "SHADER RELOAD ERROR:\n" << e.what() << std::endl;
+        LOG_ERROR("SHADER RELOAD ERROR: {0}", e.what());
       }
 
       isRPressed = true;
