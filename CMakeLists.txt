@@ -33,7 +33,26 @@ set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "")
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "")
 FetchContent_MakeAvailable(assimp)
 
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG        docking
+)
+FetchContent_MakeAvailable(imgui)
+
 find_package(OpenGL REQUIRED)
+
+add_library(imgui STATIC
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
+target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
 # --- Add Executable ---
 add_executable(main
@@ -70,6 +89,7 @@ target_link_libraries(main PRIVATE
     glm            
     assimp::assimp 
     OpenGL::GL     
+    imgui
 )
 
 if(APPLE)

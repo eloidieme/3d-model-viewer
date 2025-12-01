@@ -30,6 +30,7 @@ private:
   bool m_firstMouse = true;
 
   bool m_isRunning = true;
+  bool m_uiMode = false;
 
   struct Transform m_transform;
   Camera m_camera;

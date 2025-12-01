@@ -7,7 +7,6 @@ int main(int argc, char *argv[]) {
   Config::load("config.json");
 
   std::filesystem::path modelPath = Config::Paths::DefaultModel;
-
   if (argc > 1) {
     modelPath = argv[1];
   }

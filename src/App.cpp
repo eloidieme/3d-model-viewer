@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "imgui.h"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
@@ -24,6 +27,18 @@ App::App(std::filesystem::path modelPath) {
   Input::init(m_window->getHandle());
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
 
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO &io = ImGui::GetIO();
+  (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+  ImGui::StyleColorsDark();
+
+  ImGui_ImplGlfw_InitForOpenGL(m_window->getHandle(), true);
+  ImGui_ImplOpenGL3_Init("#version 330");
+
   m_renderer.init();
   m_renderer.setClearColor(Config::Render::ClearColor);
 
@@ -37,6 +52,10 @@ App::App(std::filesystem::path modelPath) {
 }
 
 App::~App() {
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+
   m_ourModel.reset();
   m_resourceManager.clear();
   m_window.reset();
@@ -51,6 +70,10 @@ void App::run() {
 
     processInput();
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     m_renderer.clear();
 
     m_shader->useShader();
@@ -61,6 +84,29 @@ void App::run() {
     m_renderer.submit(m_ourModel, m_transform, *m_shader);
     m_renderer.endScene();
 
+    ImGui::Begin("Settings");
+    ImGui::Text("Application Stats");
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+    ImGui::Separator();
+
+    ImGui::Text("Render Settings");
+    if (ImGui::ColorEdit3("Clear Color", &Config::Render::ClearColor.x)) {
+      m_renderer.setClearColor(Config::Render::ClearColor);
+    }
+    ImGui::DragFloat3("Light Position", &m_lightPos.x, 0.1f);
+
+    ImGui::Separator();
+    ImGui::Text("Camera");
+    auto camPos = m_camera.getPosition();
+    ImGui::Text("Pos: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
+
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     m_window->onUpdate();
   }
 }
@@ -68,6 +114,28 @@ void App::run() {
 void App::processInput() {
   if (Input::isKeyPressed(KeyCode::Escape))
     m_isRunning = false;
+
+  static bool isTabPressed = false;
+  if (Input::isKeyPressed(KeyCode::Tab)) {
+    if (!isTabPressed) {
+      m_uiMode = !m_uiMode;
+
+      if (m_uiMode) {
+        glfwSetInputMode(m_window->getHandle(), GLFW_CURSOR,
+                         GLFW_CURSOR_NORMAL);
+      } else {
+        glfwSetInputMode(m_window->getHandle(), GLFW_CURSOR,
+                         GLFW_CURSOR_DISABLED);
+        m_firstMouse = true;
+      }
+      isTabPressed = true;
+    }
+  } else {
+    isTabPressed = false;
+  }
+
+  if (m_uiMode)
+    return;
 
   if (Input::isKeyPressed(KeyCode::Up) || Input::isKeyPressed(KeyCode::W))
     m_camera.processKeyboard(CameraMovement::FORWARD, m_deltaTime);

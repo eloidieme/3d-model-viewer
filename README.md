@@ -26,7 +26,7 @@ This project uses CMake's `FetchContent` to automatically download dependencies 
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/yourusername/deltaviewer.git](https://github.com/yourusername/deltaviewer.git)
+    git clone [https://github.com/eloidieme/deltaviewer.git](https://github.com/eloidieme/deltaviewer.git)
     cd deltaviewer
     ```
 
