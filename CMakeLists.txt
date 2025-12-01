@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.11)
-project(ModelViewer VERSION 1.0)
+project(Deltaviewer VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(FetchContent)
 
-# --- Fetch GLFW ---
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -14,7 +13,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-# --- Fetch GLM ---
 FetchContent_Declare(
     glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
@@ -22,7 +20,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
-# --- Fetch Assimp ---
 FetchContent_Declare(
     assimp
     GIT_REPOSITORY https://github.com/assimp/assimp.git
@@ -39,14 +36,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(imgui)
 
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG        v1.12.0
+)
+FetchContent_MakeAvailable(spdlog)
+
 find_package(OpenGL REQUIRED)
 
-# --- Platform-specific libraries for GLFW/ImGui ---
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
     set(PLATFORM_LIBS
         X11::X11
-        ${CMAKE_DL_LIBS}  # for dlopen, dlsym, etc.
+        ${CMAKE_DL_LIBS}
     )
 elseif(APPLE)
     set(PLATFORM_LIBS
@@ -55,7 +58,6 @@ elseif(APPLE)
         "-framework CoreFoundation"
     )
 elseif(WIN32)
-    # Windows doesn't need extra libs beyond what GLFW handles
     set(PLATFORM_LIBS "")
 endif()
 
@@ -72,13 +74,13 @@ add_library(imgui STATIC
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 target_link_libraries(imgui PUBLIC glfw OpenGL::GL ${PLATFORM_LIBS})
 
-# --- Add Executable ---
 add_executable(main
     src/main.cpp
     src/App.cpp
     src/Config.cpp
     src/Core/Window.cpp
     src/Core/Input.cpp
+    src/Core/Log.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp
@@ -89,7 +91,6 @@ add_executable(main
     vendor/glad/src/glad.c
 )
 
-# --- Include Directories ---
 target_include_directories(main PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/vendor/glad/include
@@ -97,12 +98,12 @@ target_include_directories(main PRIVATE
     ${PROJECT_SOURCE_DIR}/vendor/nlohmann
 )
 
-# --- Link Libraries to Executable ---
 target_link_libraries(main PRIVATE
     glfw           
     glm            
     assimp::assimp 
     OpenGL::GL     
     imgui
+    spdlog::spdlog
     ${PLATFORM_LIBS}
 )

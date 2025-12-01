@@ -1,9 +1,13 @@
 #include "App.hpp"
+#include "Config.hpp"
+#include "Core/Log.hpp"
 
 #include <filesystem>
-#include <iostream>
 
 int main(int argc, char *argv[]) {
+  Log::init();
+  LOG_CORE_WARN("Initialized Log System!");
+
   Config::load("config.json");
 
   std::filesystem::path modelPath = Config::Paths::DefaultModel;
@@ -12,7 +16,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (!std::filesystem::exists(modelPath)) {
-    std::cerr << "FATAL: Path does not exist: " << modelPath << std::endl;
+    LOG_CORE_CRITICAL("FATAL: Path does not exist: {0}", modelPath.string());
     return EXIT_FAILURE;
   }
 
@@ -20,7 +24,7 @@ int main(int argc, char *argv[]) {
     App app(modelPath);
     app.run();
   } catch (const std::exception &e) {
-    std::cerr << e.what() << std::endl;
+    LOG_CORE_CRITICAL("Application Crash: {0}", e.what());
     return EXIT_FAILURE;
   }
 
