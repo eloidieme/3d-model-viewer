@@ -36,6 +36,16 @@ App::App(std::filesystem::path modelPath) {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+  float xscale, yscale;
+  glfwGetWindowContentScale(m_window->getHandle(), &xscale, &yscale);
+  float scale = xscale;
+  
+  io.Fonts->AddFontDefault();
+  io.FontGlobalScale = scale;
+  
+  ImGuiStyle &style = ImGui::GetStyle();
+  style.ScaleAllSizes(scale);
+
   ImGui::StyleColorsDark();
 
   ImGui_ImplGlfw_InitForOpenGL(m_window->getHandle(), true);
