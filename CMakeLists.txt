@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.11)
-
 project(ModelViewer VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -42,6 +41,24 @@ FetchContent_MakeAvailable(imgui)
 
 find_package(OpenGL REQUIRED)
 
+# --- Platform-specific libraries for GLFW/ImGui ---
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    set(PLATFORM_LIBS
+        X11::X11
+        ${CMAKE_DL_LIBS}  # for dlopen, dlsym, etc.
+    )
+elseif(APPLE)
+    set(PLATFORM_LIBS
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreFoundation"
+    )
+elseif(WIN32)
+    # Windows doesn't need extra libs beyond what GLFW handles
+    set(PLATFORM_LIBS "")
+endif()
+
 add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp
     ${imgui_SOURCE_DIR}/imgui_draw.cpp
@@ -51,27 +68,24 @@ add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
+
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
-target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
+target_link_libraries(imgui PUBLIC glfw OpenGL::GL ${PLATFORM_LIBS})
 
 # --- Add Executable ---
 add_executable(main
     src/main.cpp
     src/App.cpp
     src/Config.cpp
-
     src/Core/Window.cpp
     src/Core/Input.cpp
-
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp
     src/Graphics/Mesh.cpp
     src/Graphics/ResourceManager.cpp
     src/Graphics/stb_image.cpp
-
     src/Scene/Model.cpp
-
     vendor/glad/src/glad.c
 )
 
@@ -90,12 +104,5 @@ target_link_libraries(main PRIVATE
     assimp::assimp 
     OpenGL::GL     
     imgui
+    ${PLATFORM_LIBS}
 )
-
-if(APPLE)
-    target_link_libraries(main PRIVATE
-        "-framework Cocoa"
-        "-framework IOKit"
-        "-framework CoreFoundation"
-    )
-endif()

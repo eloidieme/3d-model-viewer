@@ -1,7 +1,7 @@
 #include "Core/Window.hpp"
 
+#include <stdexcept>
 #include <glad/glad.h>
-
 #include <GLFW/glfw3.h>
 
 #include "Core/Event.hpp"

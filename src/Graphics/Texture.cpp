@@ -1,5 +1,6 @@
 #include "Graphics/Texture.hpp"
 
+#include <stdexcept>
 #include <glad/glad.h>
 
 #include "stb_image.h"
