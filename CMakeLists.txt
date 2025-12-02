@@ -85,9 +85,11 @@ add_executable(main
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp
     src/Graphics/Mesh.cpp
+    src/Graphics/Material.cpp
     src/Graphics/ResourceManager.cpp
     src/Graphics/stb_image.cpp
     src/Scene/Model.cpp
+    src/Scene/Scene.cpp
     vendor/glad/src/glad.c
 )
 

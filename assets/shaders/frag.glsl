@@ -12,8 +12,8 @@ layout (std140) uniform CameraData {
     vec3 viewPos;
 };
 
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_specular;
 uniform float materialShininess;
 uniform vec3 lightPos;
 
@@ -39,10 +39,10 @@ void main() {
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
 
-    vec3 specularMapColor = vec3(texture(texture_specular1, TexCoord));
+    vec3 specularMapColor = vec3(texture(texture_specular, TexCoord));
 
     vec3 specular = 0.5 * spec * specularMapColor;
-    vec4 objectColor = texture(texture_diffuse1, TexCoord);
+    vec4 objectColor = texture(texture_diffuse, TexCoord);
     vec3 result = (ambient + diffuse) * objectColor.rgb + specular;
 
     FragColor = vec4(result, objectColor.a);

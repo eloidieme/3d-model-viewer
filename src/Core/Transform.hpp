@@ -26,7 +26,7 @@ public:
     m_dirty = true;
   }
 
-  const glm::mat4 &getModelMatrix() {
+  const glm::mat4 &getModelMatrix() const {
     if (m_dirty) {
       glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
       model = glm::rotate(model, glm::radians(m_rotation.x),
@@ -48,6 +48,6 @@ private:
   glm::vec3 m_rotation;
   glm::vec3 m_scale;
 
-  bool m_dirty = true;
-  glm::mat4 m_cachedMatrix{1.0f};
+  mutable bool m_dirty = true;
+  mutable glm::mat4 m_cachedMatrix{1.0f};
 };

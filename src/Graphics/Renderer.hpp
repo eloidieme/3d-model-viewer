@@ -2,12 +2,19 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
 
-#include "Graphics/Shader.hpp"
-#include "Scene/Model.hpp"
+#include "Graphics/Material.hpp"
+#include "Graphics/Mesh.hpp"
+#include "Scene/Scene.hpp"
 
-class Camera;
-class Transform;
+struct RenderCommand {
+  std::shared_ptr<Mesh> mesh;
+  std::shared_ptr<Material> material;
+  glm::mat4 transform;
+
+  float distanceToCamera;
+};
 
 struct CameraDataUBOLayout {
   glm::mat4 view;
@@ -20,17 +27,18 @@ class Renderer {
 public:
   void init();
 
-  void clear();
   void setClearColor(const glm::vec4 &color);
+  void clear();
 
-  void beginScene(const Camera &camera, Shader &shader);
-
+  void beginScene(Scene &scene);
   void endScene();
-
-  void submit(const std::shared_ptr<Model> &model, Transform &transform,
-              Shader &shader);
-  void submit(Mesh &mesh, const glm::mat4 &modelMatrix, Shader &shader);
 
 private:
   unsigned int m_CameraUBO = 0;
+
+  std::vector<RenderCommand> m_renderQueue;
+
+  void submit(const std::shared_ptr<Mesh> &mesh,
+              const std::shared_ptr<Material> &material,
+              const glm::mat4 &transform);
 };
