@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Core/InputActions.hpp"
+#include "Core/KeyCodes.hpp"
 #include <glm/glm.hpp>
+#include <map>
 #include <string>
 
 struct WindowConfig {
@@ -36,6 +39,8 @@ struct Config {
   RenderConfig render;
   CameraConfig camera;
   PathConfig paths;
+
+  std::map<Action, KeyCode> bindings;
 
   static Config load(const std::string &path);
 };

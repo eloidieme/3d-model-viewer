@@ -2,6 +2,7 @@
 
 #include "Config.hpp"
 #include "Core/Event.hpp"
+#include "Core/InputManager.hpp"
 #include "Core/LayerStack.hpp"
 #include "Core/Window.hpp"
 #include "UI/ImGuiLayer.hpp"
@@ -23,6 +24,8 @@ private:
 
   LayerStack m_layerStack;
   ImGuiLayer *m_imguiLayer;
+
+  InputManager m_inputManager;
 
   float m_lastFrameTime = 0.0f;
 };

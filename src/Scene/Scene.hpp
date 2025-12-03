@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.hpp"
+#include "Core/InputManager.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
 #include "Graphics/Material.hpp"
@@ -21,7 +22,7 @@ public:
   Scene(const CameraConfig &cameraConfig, const RenderConfig &renderConfig);
   ~Scene() = default;
 
-  void onUpdate(float dt);
+  void onUpdate(float dt, const InputManager &input);
 
   void addEntity(const std::shared_ptr<Mesh> &mesh,
                  const std::shared_ptr<Material> &material,

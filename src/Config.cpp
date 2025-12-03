@@ -26,8 +26,35 @@ void from_json(const json &j, glm::vec4 &v) {
 }
 } // namespace glm
 
+Action stringToAction(const std::string &str) {
+  if (str == "MoveForward")
+    return Action::MoveForward;
+  if (str == "MoveBackward")
+    return Action::MoveBackward;
+  if (str == "MoveLeft")
+    return Action::MoveLeft;
+  if (str == "MoveRight")
+    return Action::MoveRight;
+  if (str == "MoveUp")
+    return Action::MoveUp;
+  if (str == "ToggleCursor")
+    return Action::ToggleCursor;
+  if (str == "ReloadShader")
+    return Action::ReloadShader;
+  return Action::None;
+}
+
 Config Config::load(const std::string &path) {
   Config config;
+
+  config.bindings[Action::MoveForward] = KeyCode::W;
+  config.bindings[Action::MoveBackward] = KeyCode::S;
+  config.bindings[Action::MoveLeft] = KeyCode::A;
+  config.bindings[Action::MoveRight] = KeyCode::D;
+  config.bindings[Action::MoveUp] = KeyCode::Space;
+  config.bindings[Action::MoveDown] = KeyCode::LeftShift;
+  config.bindings[Action::ToggleCursor] = KeyCode::Tab;
+  config.bindings[Action::ReloadShader] = KeyCode::R;
 
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -81,6 +108,15 @@ Config Config::load(const std::string &path) {
         config.paths.ShaderVert = p["ShaderVert"];
       if (p.contains("ShaderFrag"))
         config.paths.ShaderFrag = p["ShaderFrag"];
+    }
+
+    if (j.contains("Bindings")) {
+      for (auto &[key, value] : j["Bindings"].items()) {
+        Action action = stringToAction(key);
+        if (action != Action::None) {
+          config.bindings[action] = (KeyCode)value.get<int>();
+        }
+      }
     }
 
     LOG_CORE_INFO("Config: Loaded {0} successfully.", path);

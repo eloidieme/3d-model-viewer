@@ -16,7 +16,12 @@ App::App(const Config &config, std::filesystem::path modelPath) {
 
   Input::init(m_window->getHandle());
 
-  m_layerStack.pushLayer(new EditorLayer(config, modelPath.string()));
+  for (const auto &[action, key] : config.bindings) {
+    m_inputManager.setBinding(action, key);
+  }
+
+  m_layerStack.pushLayer(
+      new EditorLayer(config, modelPath.string(), m_inputManager));
 
   m_imguiLayer = new ImGuiLayer(m_window->getHandle());
   m_layerStack.pushLayer(m_imguiLayer);
@@ -31,6 +36,7 @@ void App::run() {
     m_lastFrameTime = time;
 
     Input::update();
+    m_inputManager.update();
 
     for (Layer *layer : m_layerStack) {
       layer->onUpdate(dt);

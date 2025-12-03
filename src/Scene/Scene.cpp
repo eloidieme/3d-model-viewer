@@ -17,14 +17,14 @@ void Scene::addEntity(const std::shared_ptr<Mesh> &mesh,
   m_entities.push_back(e);
 }
 
-void Scene::onUpdate(float dt) {
-  if (Input::isKeyPressed(KeyCode::Up) || Input::isKeyPressed(KeyCode::W))
+void Scene::onUpdate(float dt, const InputManager &input) {
+  if (input.isActionPressed(Action::MoveForward))
     m_camera.processKeyboard(CameraMovement::FORWARD, dt);
-  if (Input::isKeyPressed(KeyCode::Down) || Input::isKeyPressed(KeyCode::S))
+  if (input.isActionPressed(Action::MoveBackward))
     m_camera.processKeyboard(CameraMovement::BACKWARD, dt);
-  if (Input::isKeyPressed(KeyCode::Left) || Input::isKeyPressed(KeyCode::A))
+  if (input.isActionPressed(Action::MoveLeft))
     m_camera.processKeyboard(CameraMovement::LEFT, dt);
-  if (Input::isKeyPressed(KeyCode::Right) || Input::isKeyPressed(KeyCode::D))
+  if (input.isActionPressed(Action::MoveRight))
     m_camera.processKeyboard(CameraMovement::RIGHT, dt);
 }
 

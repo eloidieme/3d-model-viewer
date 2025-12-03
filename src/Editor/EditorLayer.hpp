@@ -9,7 +9,8 @@
 
 class EditorLayer : public Layer {
 public:
-  EditorLayer(const Config &config, const std::string &modelPath);
+  EditorLayer(const Config &config, const std::string &modelPath,
+              InputManager &inputManager);
   virtual ~EditorLayer() = default;
 
   void onAttach() override;
@@ -23,6 +24,7 @@ private:
   Config m_config;
 
   ResourceManager m_resourceManager;
+  InputManager &m_inputManager;
   Renderer m_renderer;
   std::unique_ptr<Scene> m_scene;
 
@@ -32,6 +34,5 @@ private:
   std::string m_modelPath;
   bool m_viewportFocused = false;
 
-  bool onKeyPressed(KeyPressedEvent &e);
   bool onMouseButtonPressed(MouseButtonPressedEvent &e);
 };

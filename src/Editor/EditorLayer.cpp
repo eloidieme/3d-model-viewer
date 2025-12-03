@@ -11,8 +11,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <imgui.h>
 
-EditorLayer::EditorLayer(const Config &config, const std::string &modelPath)
-    : m_config(config), m_modelPath(modelPath) {}
+EditorLayer::EditorLayer(const Config &config, const std::string &modelPath,
+                         InputManager &inputManager)
+    : m_config(config), m_modelPath(modelPath), m_inputManager(inputManager) {}
 
 void EditorLayer::onAttach() {
   m_renderer.init();
@@ -51,10 +52,25 @@ void EditorLayer::onDetach() {
 }
 
 void EditorLayer::onUpdate(float dt) {
+  if (m_inputManager.isActionJustPressed(Action::ToggleCursor)) {
+    if (m_viewportFocused) {
+      Input::setCursorMode(CursorMode::Normal);
+      m_viewportFocused = false;
+    } else {
+      Input::setCursorMode(CursorMode::Locked);
+      m_viewportFocused = true;
+    }
+  }
+
+  if (m_inputManager.isActionJustPressed(Action::ReloadShader)) {
+    LOG_INFO("Reloading Shaders...");
+    m_resourceManager.reloadAllShaders();
+  }
+
   if (m_viewportFocused) {
     glm::vec2 delta = Input::getMouseDelta();
     m_scene->onMouseView(delta.x, delta.y);
-    m_scene->onUpdate(dt);
+    m_scene->onUpdate(dt, m_inputManager);
   }
 
   m_renderer.clear();
@@ -147,32 +163,9 @@ void EditorLayer::onEvent(Event &e) {
     }
   }
 
-  if (e.getType() == EventType::KeyPressed) {
-    onKeyPressed(static_cast<KeyPressedEvent &>(e));
-  } else if (e.getType() == EventType::MouseButtonPressed) {
+  if (e.getType() == EventType::MouseButtonPressed) {
     onMouseButtonPressed(static_cast<MouseButtonPressedEvent &>(e));
   }
-}
-
-bool EditorLayer::onKeyPressed(KeyPressedEvent &e) {
-  if (e.getKeyCode() == KeyCode::Tab) {
-    if (m_viewportFocused) {
-      Input::setCursorMode(CursorMode::Normal);
-      m_viewportFocused = false;
-    } else {
-      Input::setCursorMode(CursorMode::Locked);
-      m_viewportFocused = true;
-    }
-    return true;
-  }
-
-  if (e.getKeyCode() == KeyCode::R) {
-    LOG_INFO("Reloading Shaders...");
-    m_resourceManager.reloadAllShaders();
-    return true;
-  }
-
-  return false;
 }
 
 bool EditorLayer::onMouseButtonPressed(MouseButtonPressedEvent &e) {

@@ -80,6 +80,7 @@ add_executable(main
     src/Config.cpp
     src/Core/Window.cpp
     src/Core/Input.cpp
+    src/Core/InputManager.cpp
     src/Core/Log.cpp
     src/Core/Transform.cpp
     src/Editor/EditorLayer.cpp
