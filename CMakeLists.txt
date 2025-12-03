@@ -81,7 +81,9 @@ add_executable(main
     src/Core/Window.cpp
     src/Core/Input.cpp
     src/Core/Log.cpp
+    src/Core/Transform.cpp
     src/Editor/EditorLayer.cpp
+    src/Graphics/Camera.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp
