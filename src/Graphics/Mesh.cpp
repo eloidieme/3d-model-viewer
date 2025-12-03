@@ -20,29 +20,30 @@ void Mesh::drawGeometry() {
 }
 
 void Mesh::setupMesh() {
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
+  glCreateVertexArrays(1, &VAO);
+  glCreateBuffers(1, &VBO);
+  glCreateBuffers(1, &EBO);
 
-  glBindVertexArray(VAO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glNamedBufferData(VBO, m_vertices.size() * sizeof(Vertex), m_vertices.data(),
+                    GL_STATIC_DRAW);
+  glNamedBufferData(EBO, m_indices.size() * sizeof(unsigned int),
+                    m_indices.data(), GL_STATIC_DRAW);
 
-  glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex),
-               &m_vertices[0], GL_STATIC_DRAW);
+  glVertexArrayElementBuffer(VAO, EBO);
+  glVertexArrayVertexBuffer(VAO, 0, VBO, 0, sizeof(Vertex));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int),
-               &m_indices[0], GL_STATIC_DRAW);
+  glEnableVertexArrayAttrib(VAO, 0);
+  glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, GL_FALSE,
+                            offsetof(Vertex, Position));
+  glVertexArrayAttribBinding(VAO, 0, 0);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void *)offsetof(Vertex, Position));
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void *)offsetof(Vertex, Normal));
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void *)offsetof(Vertex, TexCoords));
-  glEnableVertexAttribArray(2);
+  glEnableVertexArrayAttrib(VAO, 1);
+  glVertexArrayAttribFormat(VAO, 1, 3, GL_FLOAT, GL_FALSE,
+                            offsetof(Vertex, Normal));
+  glVertexArrayAttribBinding(VAO, 1, 0);
 
-  glBindVertexArray(0);
+  glEnableVertexArrayAttrib(VAO, 2);
+  glVertexArrayAttribFormat(VAO, 2, 2, GL_FLOAT, GL_FALSE,
+                            offsetof(Vertex, TexCoords));
+  glVertexArrayAttribBinding(VAO, 2, 0);
 }

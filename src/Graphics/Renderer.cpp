@@ -12,12 +12,11 @@ void Renderer::init() {
 
   LOG_CORE_INFO("Renderer initialized (Depth Test: ENABLED)");
 
-  glGenBuffers(1, &m_CameraUBO);
-  glBindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraDataUBOLayout), nullptr,
-               GL_DYNAMIC_DRAW);
+  glCreateBuffers(1, &m_CameraUBO);
+  glNamedBufferData(m_CameraUBO, sizeof(CameraDataUBOLayout), nullptr,
+                    GL_DYNAMIC_DRAW);
+
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_CameraUBO);
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Renderer::setClearColor(const glm::vec4 &color) {
@@ -38,10 +37,8 @@ void Renderer::beginScene(Scene &scene) {
   cameraData.projection = camera.getProjectionMatrix();
   cameraData.viewPos = camera.getPosition();
 
-  glBindBuffer(GL_UNIFORM_BUFFER, m_CameraUBO);
-  glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(CameraDataUBOLayout),
-                  &cameraData);
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  glNamedBufferSubData(m_CameraUBO, 0, sizeof(CameraDataUBOLayout),
+                       &cameraData);
 
   for (const auto &entity : scene.getEntities()) {
     if (entity.mesh && entity.material) {
