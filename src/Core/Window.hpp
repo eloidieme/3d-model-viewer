@@ -8,12 +8,6 @@
 
 struct GLFWwindow;
 
-struct WindowProps {
-  unsigned int width;
-  unsigned int height;
-  std::string title;
-};
-
 class Window {
 public:
   using EventCallbackFn = std::function<void(Event &)>;
