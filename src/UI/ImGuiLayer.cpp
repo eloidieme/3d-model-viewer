@@ -88,4 +88,9 @@ void ImGuiLayer::onEvent(Event &e) {
     e.m_handled = true;
     return;
   }
+
+  if (e.getType() == EventType::KeyTyped) {
+    KeyTypedEvent &event = static_cast<KeyTypedEvent &>(e);
+    io.AddInputCharacter((unsigned int)event.getKeyCode());
+  }
 }

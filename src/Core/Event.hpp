@@ -18,6 +18,7 @@ enum class EventType {
   WindowResize,
   WindowClose,
   KeyPressed,
+  KeyTyped,
   KeyReleased,
   MouseButtonPressed,
   MouseButtonReleased,
@@ -69,6 +70,13 @@ class KeyReleasedEvent : public KeyEvent {
 public:
   KeyReleasedEvent(KeyCode keycode) : KeyEvent(keycode) {}
   EventType getType() const override { return EventType::KeyReleased; }
+};
+
+class KeyTypedEvent : public KeyEvent {
+public:
+  KeyTypedEvent(KeyCode keycode) : KeyEvent(keycode) {}
+
+  EventType getType() const override { return EventType::KeyTyped; }
 };
 
 // --- Mouse Events ---

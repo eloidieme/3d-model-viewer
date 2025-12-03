@@ -68,6 +68,14 @@ Window::Window() {
     }
   });
 
+  glfwSetCharCallback(
+      m_nativeHandle, [](GLFWwindow *window, unsigned int keycode) {
+        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+
+        KeyTypedEvent event((KeyCode)keycode);
+        data.EventCallback(event);
+      });
+
   glfwSetMouseButtonCallback(
       m_nativeHandle, [](GLFWwindow *window, int button, int action, int mods) {
         WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
