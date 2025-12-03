@@ -4,7 +4,8 @@
 #include "Core/Input.hpp"
 #include "Core/KeyCodes.hpp"
 
-Scene::Scene() { m_camera = Camera(Config::Camera::StartPosition); }
+Scene::Scene(const CameraConfig &cameraConfig, const RenderConfig &renderConfig)
+    : m_camera(cameraConfig), m_lightPos(renderConfig.LightPosition) {}
 
 void Scene::addEntity(const std::shared_ptr<Mesh> &mesh,
                       const std::shared_ptr<Material> &material,

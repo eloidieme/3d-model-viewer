@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.hpp"
 #include "Core/Event.hpp"
 #include "Core/LayerStack.hpp"
 #include "Core/Window.hpp"
@@ -10,7 +11,7 @@
 
 class App {
 public:
-  App(std::filesystem::path modelPath);
+  App(const Config &config, std::filesystem::path modelPath);
   ~App();
 
   void run();

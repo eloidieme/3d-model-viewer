@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.hpp"
 #include "Core/Transform.hpp"
 #include "Graphics/Camera.hpp"
 #include "Graphics/Material.hpp"
@@ -17,7 +18,7 @@ struct Entity {
 
 class Scene {
 public:
-  Scene();
+  Scene(const CameraConfig &cameraConfig, const RenderConfig &renderConfig);
   ~Scene() = default;
 
   void onUpdate(float dt);
@@ -38,6 +39,6 @@ private:
   Camera m_camera;
   std::vector<Entity> m_entities;
 
-  glm::vec3 m_lightPos{Config::Render::LightPosition};
+  glm::vec3 m_lightPos;
   std::vector<glm::vec4> m_clippingPlanes;
 };

@@ -26,40 +26,13 @@ void from_json(const json &j, glm::vec4 &v) {
 }
 } // namespace glm
 
-namespace Config {
-namespace Window {
-unsigned int Width = 1280;
-unsigned int Height = 960;
-std::string Title = "Deltaviewer";
-} // namespace Window
+Config Config::load(const std::string &path) {
+  Config config;
 
-namespace Render {
-glm::vec4 ClearColor = {0.1f, 0.1f, 0.2f, 1.0f};
-glm::vec3 LightPosition = {2.0f, 2.0f, 2.0f};
-} // namespace Render
-
-namespace Camera {
-float MovementSpeed = 2.5f;
-float Sensitivity = 0.1f;
-float Fov = 45.0f;
-float NearPlane = 0.1f;
-float FarPlane = 100.0f;
-glm::vec3 StartPosition = {0.0f, 0.0f, 7.5f};
-} // namespace Camera
-
-namespace Paths {
-std::string DefaultModel = "assets/models/backpack/backpack.obj";
-std::string ShaderVert = "assets/shaders/vert.glsl";
-std::string ShaderFrag = "assets/shaders/frag.glsl";
-std::string PlaneShaderVert = "assets/shaders/plane_vert.glsl";
-std::string PlaneShaderFrag = "assets/shaders/plane_frag.glsl";
-} // namespace Paths
-
-void load(const std::string &path) {
   std::ifstream file(path);
   if (!file.is_open()) {
     LOG_CORE_WARN("Config: Could not find {0}. Using defaults.", path);
-    return;
+    return config;
   }
 
   try {
@@ -69,45 +42,45 @@ void load(const std::string &path) {
     if (j.contains("Window")) {
       auto &w = j["Window"];
       if (w.contains("Width"))
-        Window::Width = w["Width"];
+        config.window.Width = w["Width"];
       if (w.contains("Height"))
-        Window::Height = w["Height"];
+        config.window.Height = w["Height"];
       if (w.contains("Title"))
-        Window::Title = w["Title"];
+        config.window.Title = w["Title"];
     }
 
     if (j.contains("Render")) {
       auto &r = j["Render"];
       if (r.contains("ClearColor"))
-        r["ClearColor"].get_to(Render::ClearColor);
+        r["ClearColor"].get_to(config.render.ClearColor);
       if (r.contains("LightPosition"))
-        r["LightPosition"].get_to(Render::LightPosition);
+        r["LightPosition"].get_to(config.render.LightPosition);
     }
 
     if (j.contains("Camera")) {
       auto &c = j["Camera"];
       if (c.contains("MovementSpeed"))
-        Camera::MovementSpeed = c["MovementSpeed"];
+        config.camera.MovementSpeed = c["MovementSpeed"];
       if (c.contains("Sensitivity"))
-        Camera::Sensitivity = c["Sensitivity"];
+        config.camera.Sensitivity = c["Sensitivity"];
       if (c.contains("Fov"))
-        Camera::Fov = c["Fov"];
+        config.camera.Fov = c["Fov"];
       if (c.contains("StartPosition"))
-        c["StartPosition"].get_to(Camera::StartPosition);
+        c["StartPosition"].get_to(config.camera.StartPosition);
       if (c.contains("NearPlane"))
-        Camera::NearPlane = c["NearPlane"];
+        config.camera.NearPlane = c["NearPlane"];
       if (c.contains("FarPlane"))
-        Camera::FarPlane = c["FarPlane"];
+        config.camera.FarPlane = c["FarPlane"];
     }
 
     if (j.contains("Paths")) {
       auto &p = j["Paths"];
       if (p.contains("DefaultModel"))
-        Paths::DefaultModel = p["DefaultModel"];
+        config.paths.DefaultModel = p["DefaultModel"];
       if (p.contains("ShaderVert"))
-        Paths::ShaderVert = p["ShaderVert"];
+        config.paths.ShaderVert = p["ShaderVert"];
       if (p.contains("ShaderFrag"))
-        Paths::ShaderFrag = p["ShaderFrag"];
+        config.paths.ShaderFrag = p["ShaderFrag"];
     }
 
     LOG_CORE_INFO("Config: Loaded {0} successfully.", path);
@@ -115,5 +88,6 @@ void load(const std::string &path) {
   } catch (const std::exception &e) {
     LOG_CORE_ERROR("Config: Error parsing JSON: {0}", e.what());
   }
+
+  return config;
 }
-} // namespace Config

@@ -7,10 +7,10 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
-Window::Window() {
-  m_data.Title = Config::Window::Title;
-  m_data.Width = Config::Window::Width;
-  m_data.Height = Config::Window::Height;
+Window::Window(const WindowConfig &config) {
+  m_data.Title = config.Title;
+  m_data.Width = config.Width;
+  m_data.Height = config.Height;
 
   LOG_CORE_INFO("Creating Window {0} ({1}x{2})", m_data.Title, m_data.Width,
                 m_data.Height);

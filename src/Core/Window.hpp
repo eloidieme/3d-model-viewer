@@ -12,7 +12,7 @@ class Window {
 public:
   using EventCallbackFn = std::function<void(Event &)>;
 
-  Window();
+  Window(const WindowConfig &config);
   ~Window();
 
   static void init();

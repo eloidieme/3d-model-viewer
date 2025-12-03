@@ -11,20 +11,20 @@
 #include <glm/gtx/quaternion.hpp>
 #include <imgui.h>
 
-EditorLayer::EditorLayer(const std::string &modelPath)
-    : m_modelPath(modelPath) {}
+EditorLayer::EditorLayer(const Config &config, const std::string &modelPath)
+    : m_config(config), m_modelPath(modelPath) {}
 
 void EditorLayer::onAttach() {
   m_renderer.init();
-  m_renderer.setClearColor(Config::Render::ClearColor);
+  m_renderer.setClearColor(m_config.render.ClearColor);
 
-  m_scene = std::make_unique<Scene>();
+  m_scene = std::make_unique<Scene>(m_config.camera, m_config.render);
 
-  m_scene->getCamera().setAspectRatio((float)Config::Window::Width,
-                                      (float)Config::Window::Height);
+  m_scene->getCamera().setAspectRatio((float)m_config.window.Width,
+                                      (float)m_config.window.Height);
 
   auto shader = m_resourceManager.loadShader(
-      "default", Config::Paths::ShaderVert, Config::Paths::ShaderFrag);
+      "default", m_config.paths.ShaderVert, m_config.paths.ShaderFrag);
   Model myModel(m_modelPath, m_resourceManager, shader);
   myModel.addToScene(*m_scene);
 
@@ -38,7 +38,7 @@ void EditorLayer::onAttach() {
   m_planeMesh = std::make_shared<Mesh>(vertices, indices);
 
   auto planeShader = m_resourceManager.loadShader(
-      "plane", Config::Paths::PlaneShaderVert, Config::Paths::PlaneShaderFrag);
+      "plane", m_config.paths.PlaneShaderVert, m_config.paths.PlaneShaderFrag);
   m_planeMaterial = std::make_shared<Material>(planeShader);
   m_planeMaterial->setVec4("u_Color", glm::vec4(0.8f, 0.8f, 0.8f, 0.1f));
   m_planeMaterial->setTransparent(true);
@@ -92,8 +92,8 @@ void EditorLayer::onImGuiRender() {
   if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
     ImGui::DragFloat3("Light Position", &m_scene->getLightPos().x, 0.1f);
 
-    if (ImGui::ColorEdit3("Clear Color", &Config::Render::ClearColor.x)) {
-      m_renderer.setClearColor(Config::Render::ClearColor);
+    if (ImGui::ColorEdit3("Clear Color", &m_config.render.ClearColor.x)) {
+      m_renderer.setClearColor(m_config.render.ClearColor);
     }
   }
 

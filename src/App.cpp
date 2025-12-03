@@ -5,18 +5,18 @@
 
 #include <GLFW/glfw3.h>
 
-App::App(std::filesystem::path modelPath) {
+App::App(const Config &config, std::filesystem::path modelPath) {
   if (!glfwInit())
     throw std::runtime_error("Failed to init GLFW");
 
   Window::init();
-  m_window = std::make_unique<Window>();
+  m_window = std::make_unique<Window>(config.window);
 
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
 
   Input::init(m_window->getHandle());
 
-  m_layerStack.pushLayer(new EditorLayer(modelPath.string()));
+  m_layerStack.pushLayer(new EditorLayer(config, modelPath.string()));
 
   m_imguiLayer = new ImGuiLayer(m_window->getHandle());
   m_layerStack.pushLayer(m_imguiLayer);

@@ -8,9 +8,9 @@ int main(int argc, char *argv[]) {
   Log::init();
   LOG_CORE_WARN("Initialized Log System!");
 
-  Config::load("config.json");
+  Config cfg = Config::load("config.json");
 
-  std::filesystem::path modelPath = Config::Paths::DefaultModel;
+  std::filesystem::path modelPath = cfg.paths.DefaultModel;
   if (argc > 1) {
     modelPath = argv[1];
   }
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   }
 
   try {
-    App app(modelPath);
+    App app(cfg, modelPath);
     app.run();
   } catch (const std::exception &e) {
     LOG_CORE_CRITICAL("Application Crash: {0}", e.what());

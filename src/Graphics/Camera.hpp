@@ -11,16 +11,15 @@ enum class CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
 class Camera {
 
 public:
-  Camera(glm::vec3 position = Config::Camera::StartPosition,
-         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f,
-         float pitch = 0.0f)
+  Camera(const CameraConfig &config)
       : m_front(glm::vec3(0.0f, 0.0f, -1.0f)),
-        m_movementSpeed(Config::Camera::MovementSpeed),
-        m_mouseSensitivity(Config::Camera::Sensitivity) {
-    m_position = position;
-    m_worldUp = up;
-    m_yaw = yaw;
-    m_pitch = pitch;
+        m_movementSpeed(config.MovementSpeed),
+        m_mouseSensitivity(config.Sensitivity), m_fov(config.Fov),
+        m_nearPlane(config.NearPlane), m_farPlane(config.FarPlane) {
+    m_position = config.StartPosition;
+    m_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    m_yaw = -90.0f;
+    m_pitch = 0.0f;
     updateCameraVectors();
   }
 
@@ -66,9 +65,8 @@ public:
   }
 
   void setAspectRatio(float width, float height) {
-    m_projection =
-        glm::perspective(glm::radians(Config::Camera::Fov), width / height,
-                         Config::Camera::NearPlane, Config::Camera::FarPlane);
+    m_projection = glm::perspective(glm::radians(m_fov), width / height,
+                                    m_nearPlane, m_farPlane);
   }
 
 private:
@@ -83,6 +81,9 @@ private:
 
   float m_movementSpeed;
   float m_mouseSensitivity;
+  float m_fov;
+  float m_nearPlane;
+  float m_farPlane;
 
   glm::mat4 m_projection;
 
