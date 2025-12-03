@@ -45,7 +45,7 @@ void ImGuiLayer::onAttach() {
   }
 
   ImGui_ImplGlfw_InitForOpenGL(m_windowHandle, true);
-  ImGui_ImplOpenGL3_Init("#version 330");
+  ImGui_ImplOpenGL3_Init("#version 460");
 
   LOG_CORE_INFO("ImGui Layer Initialized");
 }
