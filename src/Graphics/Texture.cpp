@@ -28,9 +28,10 @@ Texture::Texture(const std::string &textureFilePath) {
     GLenum format = 0;
     if (m_BPP == 1)
       format = GL_RED;
-    else if (m_BPP == 3)
+    else if (m_BPP == 3) {
       format = GL_RGB;
-    else if (m_BPP == 4)
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    } else if (m_BPP == 4)
       format = GL_RGBA;
 
     if (format != 0) {
@@ -45,6 +46,9 @@ Texture::Texture(const std::string &textureFilePath) {
         int swizzleMask[] = {GL_RED, GL_GREEN, GL_BLUE, GL_ALPHA};
         glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
       }
+
+      if (m_BPP == 3)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
       LOG_CORE_INFO("Texture loaded: {0} ({1}x{2}, {3} channel(s))",
                     textureFilePath, m_width, m_height, m_BPP);
