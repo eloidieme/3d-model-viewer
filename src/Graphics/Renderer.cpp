@@ -26,6 +26,11 @@ void Renderer::setClearColor(const glm::vec4 &color) {
   glClearColor(color.r, color.g, color.b, color.a);
 }
 
+void Renderer::waitCompute() {
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT |
+                  GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+}
+
 void Renderer::clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 void Renderer::beginScene(Scene &scene) {

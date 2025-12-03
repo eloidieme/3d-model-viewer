@@ -8,8 +8,14 @@
 
 Shader::Shader(const std::string &vertexShaderPath,
                const std::string &fragmentShaderPath)
-    : m_vertexPath(vertexShaderPath), m_fragmentPath(fragmentShaderPath) {
+    : m_vertexPath(vertexShaderPath), m_fragmentPath(fragmentShaderPath),
+      m_isCompute(false) {
 
+  compile();
+}
+
+Shader::Shader(const std::string &computeShaderPath)
+    : m_computePath(computeShaderPath), m_isCompute(true) {
   compile();
 }
 
@@ -19,7 +25,10 @@ Shader::~Shader() {
 }
 
 void Shader::reload() {
-  LOG_CORE_WARN("Reloading Shader: {0}", m_vertexPath);
+  if (m_isCompute)
+    LOG_CORE_WARN("Reloading Compute Shader: {0}", m_computePath);
+  else
+    LOG_CORE_WARN("Reloading Shader: {0}", m_vertexPath);
 
   if (m_programID != 0)
     glDeleteProgram(m_programID);
@@ -28,7 +37,59 @@ void Shader::reload() {
   compile();
 }
 
+void Shader::dispatch(unsigned int x, unsigned int y, unsigned int z) const {
+  useShader();
+  glDispatchCompute(x, y, z);
+}
+
 void Shader::compile() {
+  if (m_isCompute) {
+    std::string cShaderSourceStr;
+    std::ifstream cShaderFile;
+
+    cShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+    try {
+      cShaderFile.open(m_computePath);
+      std::stringstream cShaderStream;
+      cShaderStream << cShaderFile.rdbuf();
+      cShaderSourceStr = cShaderStream.str();
+      cShaderFile.close();
+    } catch (std::ifstream::failure &e) {
+      LOG_CORE_ERROR("SHADER FILE ERROR: Not successfully read. Path: {0}",
+                     m_computePath);
+      return;
+    }
+
+    const char *cShaderSource = cShaderSourceStr.c_str();
+    unsigned int cShader;
+    int success;
+    char infoLog[512];
+
+    cShader = glCreateShader(GL_COMPUTE_SHADER);
+    glShaderSource(cShader, 1, &cShaderSource, nullptr);
+    glCompileShader(cShader);
+    glGetShaderiv(cShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+      glGetShaderInfoLog(cShader, 512, nullptr, infoLog);
+      LOG_CORE_ERROR("COMPUTE SHADER COMPILATION FAILED ({0}):\n{1}",
+                     m_computePath, infoLog);
+    }
+
+    m_programID = glCreateProgram();
+    glAttachShader(m_programID, cShader);
+    glLinkProgram(m_programID);
+
+    glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
+    if (!success) {
+      glGetProgramInfoLog(m_programID, 512, nullptr, infoLog);
+      LOG_CORE_ERROR("COMPUTE SHADER LINKING FAILED:\n{0}", infoLog);
+    }
+
+    glDeleteShader(cShader);
+    return;
+  }
+
   std::string vShaderSourceStr, fShaderSourceStr;
   std::ifstream vShaderFile, fShaderFile;
 
@@ -102,7 +163,7 @@ void Shader::compile() {
   }
 }
 
-void Shader::useShader() { glUseProgram(m_programID); }
+void Shader::useShader() const { glUseProgram(m_programID); }
 
 int Shader::getUniformLocation(const std::string &name) const {
   if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end()) {

@@ -27,6 +27,8 @@ class Renderer {
 public:
   void init();
 
+  static void waitCompute();
+
   void setClearColor(const glm::vec4 &color);
   void clear();
 
