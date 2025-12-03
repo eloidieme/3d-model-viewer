@@ -33,12 +33,13 @@ public:
   void beginScene(Scene &scene);
   void endScene();
 
-private:
-  unsigned int m_CameraUBO = 0;
-
-  std::vector<RenderCommand> m_renderQueue;
-
   void submit(const std::shared_ptr<Mesh> &mesh,
               const std::shared_ptr<Material> &material,
               const glm::mat4 &transform);
+
+private:
+  Scene *m_activeScene = nullptr;
+  unsigned int m_CameraUBO = 0;
+
+  std::vector<RenderCommand> m_renderQueue;
 };

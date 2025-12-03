@@ -27,6 +27,8 @@ void Renderer::setClearColor(const glm::vec4 &color) {
 void Renderer::clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 void Renderer::beginScene(Scene &scene) {
+  m_activeScene = &scene; // <--- CAPTURE THIS
+
   m_renderQueue.clear();
 
   Camera &camera = scene.getCamera();
@@ -64,16 +66,58 @@ void Renderer::endScene() {
               return a.material->getShader() < b.material->getShader();
             });
 
-  std::shared_ptr<Shader> lastShader = nullptr;
+  std::vector<RenderCommand> opaqueQueue;
+  std::vector<RenderCommand> transparentQueue;
+
+  opaqueQueue.reserve(m_renderQueue.size());
+  transparentQueue.reserve(m_renderQueue.size());
 
   for (const auto &cmd : m_renderQueue) {
-    if (!cmd.material || !cmd.mesh)
-      continue;
-
-    std::shared_ptr<Shader> currentShader = cmd.material->getShader();
-
-    cmd.material->bind();
-    currentShader->setUniformMat4("model", cmd.transform);
-    cmd.mesh->drawGeometry();
+    if (cmd.material->isTransparent())
+      transparentQueue.push_back(cmd);
+    else
+      opaqueQueue.push_back(cmd);
   }
+
+  auto drawCommands = [&](const std::vector<RenderCommand> &queue) {
+    std::shared_ptr<Shader> currentShader = nullptr;
+
+    for (const auto &cmd : queue) {
+      if (!cmd.material || !cmd.mesh)
+        continue;
+
+      auto shader = cmd.material->getShader();
+
+      if (shader != currentShader) {
+        currentShader = shader;
+        cmd.material->bind();
+
+        if (m_activeScene) {
+          currentShader->setUniformVec3("lightPos",
+                                        m_activeScene->getLightPos());
+          const auto &planes = m_activeScene->getClippingPlanes();
+          currentShader->setUniformInt("u_ActiveClippingPlanes",
+                                       static_cast<int>(planes.size()));
+
+          for (size_t i = 0; i < planes.size(); i++) {
+            std::string name = "u_ClippingPlanes[" + std::to_string(i) + "]";
+            currentShader->setUniformVec4(name, planes[i]);
+          }
+        }
+      } else {
+        cmd.material->bind();
+      }
+
+      currentShader->setUniformMat4("model", cmd.transform);
+      cmd.mesh->drawGeometry();
+    }
+  };
+
+  glDepthMask(GL_TRUE);
+  drawCommands(opaqueQueue);
+
+  glDepthMask(GL_FALSE);
+  drawCommands(transparentQueue);
+
+  glDepthMask(GL_TRUE);
 }

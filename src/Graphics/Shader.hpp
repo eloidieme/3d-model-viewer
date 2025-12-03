@@ -1,9 +1,8 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
-
-#include <glm/glm.hpp>
 
 class Shader {
 public:
@@ -11,11 +10,7 @@ public:
          const std::string &fragmentShaderPath);
   ~Shader();
 
-  Shader(const Shader &other) = delete;
-  Shader &operator=(const Shader &other) = delete;
-
-  Shader(Shader &&other) = delete;
-  Shader &operator=(Shader &&other) = delete;
+  void reload();
 
   void useShader();
 
@@ -27,9 +22,13 @@ public:
   void setUniformMat4(const std::string &name, const glm::mat4 &mat) const;
 
 private:
-  unsigned int m_programID;
+  unsigned int m_programID = 0;
+
+  std::string m_vertexPath;
+  std::string m_fragmentPath;
 
   mutable std::unordered_map<std::string, int> m_uniformLocationCache;
-
   int getUniformLocation(const std::string &name) const;
+
+  void compile();
 };

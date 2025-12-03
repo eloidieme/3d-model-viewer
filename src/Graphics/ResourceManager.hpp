@@ -21,6 +21,8 @@ public:
 
   void clear();
 
+  void reloadAllShaders();
+
 private:
   std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
   std::unordered_map<std::string, std::shared_ptr<Texture>> m_textures;

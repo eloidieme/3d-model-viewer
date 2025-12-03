@@ -81,6 +81,7 @@ add_executable(main
     src/Core/Window.cpp
     src/Core/Input.cpp
     src/Core/Log.cpp
+    src/Editor/EditorLayer.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp
@@ -90,6 +91,7 @@ add_executable(main
     src/Graphics/stb_image.cpp
     src/Scene/Model.cpp
     src/Scene/Scene.cpp
+    src/UI/ImGuiLayer.cpp
     vendor/glad/src/glad.c
 )
 

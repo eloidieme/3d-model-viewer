@@ -32,6 +32,8 @@ public:
   glm::vec3 &getLightPos() { return m_lightPos; }
   std::vector<glm::vec4> &getClippingPlanes() { return m_clippingPlanes; }
 
+  void onMouseView(float xoffset, float yoffset);
+
 private:
   Camera m_camera;
   std::vector<Entity> m_entities;

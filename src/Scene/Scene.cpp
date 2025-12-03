@@ -26,3 +26,7 @@ void Scene::onUpdate(float dt) {
   if (Input::isKeyPressed(KeyCode::Right) || Input::isKeyPressed(KeyCode::D))
     m_camera.processKeyboard(CameraMovement::RIGHT, dt);
 }
+
+void Scene::onMouseView(float xoffset, float yoffset) {
+  m_camera.processMouseMovement(xoffset, yoffset);
+}

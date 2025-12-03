@@ -7,66 +7,101 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
-Window::Window(unsigned int width, unsigned int height,
-               const std::string &title) {
-  m_properties.width = width;
-  m_properties.height = height;
-  m_properties.title = title;
+Window::Window() {
+  m_data.Title = Config::Window::Title;
+  m_data.Width = Config::Window::Width;
+  m_data.Height = Config::Window::Height;
 
-  LOG_CORE_INFO("Creating Window {0} ({1}x{2})", title, width, height);
+  LOG_CORE_INFO("Creating Window {0} ({1}x{2})", m_data.Title, m_data.Width,
+                m_data.Height);
 
-  m_nativeHandle =
-      glfwCreateWindow(m_properties.width, m_properties.height,
-                       m_properties.title.c_str(), nullptr, nullptr);
-  if (m_nativeHandle == nullptr) {
-    throw std::runtime_error("ERROR::WINDOW::FAILED_TO_CREATE_WINDOW");
+  m_nativeHandle = glfwCreateWindow(m_data.Width, m_data.Height,
+                                    m_data.Title.c_str(), nullptr, nullptr);
+
+  if (!m_nativeHandle) {
+    throw std::runtime_error("Failed to create GLFW window");
   }
 
-  glfwSetWindowUserPointer(m_nativeHandle, this);
   glfwMakeContextCurrent(m_nativeHandle);
+  glfwSetWindowUserPointer(m_nativeHandle, &m_data);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    throw std::runtime_error("ERROR::GLAD::FAILED_TO_INIT_GLAD");
+    throw std::runtime_error("Failed to initialize GLAD");
   }
 
-  glfwSetFramebufferSizeCallback(m_nativeHandle, [](GLFWwindow *window,
-                                                    int width, int height) {
-    auto *instance = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    if (instance && instance->m_eventCallback) {
-      WindowResizeEvent event(width, height);
-      instance->m_eventCallback(event);
-    }
-  });
+  glfwSetFramebufferSizeCallback(
+      m_nativeHandle, [](GLFWwindow *window, int width, int height) {
+        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+        data.Width = width;
+        data.Height = height;
+
+        WindowResizeEvent event(width, height);
+        data.EventCallback(event);
+      });
+
   glfwSetWindowCloseCallback(m_nativeHandle, [](GLFWwindow *window) {
-    auto *instance = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    if (instance && instance->m_eventCallback) {
-      WindowCloseEvent event;
-      instance->m_eventCallback(event);
+    WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+    WindowCloseEvent event;
+    data.EventCallback(event);
+  });
+
+  glfwSetKeyCallback(m_nativeHandle, [](GLFWwindow *window, int key,
+                                        int scancode, int action, int mods) {
+    WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+
+    switch (action) {
+    case GLFW_PRESS: {
+      KeyPressedEvent event((KeyCode)key, false);
+      data.EventCallback(event);
+      break;
+    }
+    case GLFW_RELEASE: {
+      KeyReleasedEvent event((KeyCode)key);
+      data.EventCallback(event);
+      break;
+    }
+    case GLFW_REPEAT: {
+      KeyPressedEvent event((KeyCode)key, true);
+      data.EventCallback(event);
+      break;
+    }
     }
   });
 
-  LOG_CORE_INFO("Window initialized successfully");
+  glfwSetMouseButtonCallback(
+      m_nativeHandle, [](GLFWwindow *window, int button, int action, int mods) {
+        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+
+        switch (action) {
+        case GLFW_PRESS: {
+          MouseButtonPressedEvent event((MouseCode)button);
+          data.EventCallback(event);
+          break;
+        }
+        case GLFW_RELEASE: {
+          MouseButtonReleasedEvent event((MouseCode)button);
+          data.EventCallback(event);
+          break;
+        }
+        }
+      });
+
+  glfwSetScrollCallback(
+      m_nativeHandle, [](GLFWwindow *window, double xOffset, double yOffset) {
+        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+        MouseScrolledEvent event((float)xOffset, (float)yOffset);
+        data.EventCallback(event);
+      });
+
+  glfwSetCursorPosCallback(
+      m_nativeHandle, [](GLFWwindow *window, double xPos, double yPos) {
+        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+        MouseMovedEvent event((float)xPos, (float)yPos);
+        data.EventCallback(event);
+      });
 }
 
 Window::~Window() { glfwDestroyWindow(m_nativeHandle); };
-
-Window::Window(Window &&other) noexcept {
-  m_nativeHandle = std::exchange(other.m_nativeHandle, nullptr);
-  m_properties.width = other.m_properties.width;
-  m_properties.height = other.m_properties.height;
-  m_properties.title = other.m_properties.title;
-};
-Window &Window::operator=(Window &&other) noexcept {
-  if (m_nativeHandle != nullptr) {
-    glfwDestroyWindow(m_nativeHandle);
-  }
-  m_nativeHandle = std::exchange(other.m_nativeHandle, nullptr);
-  m_properties.width = other.m_properties.width;
-  m_properties.height = other.m_properties.height;
-  m_properties.title = other.m_properties.title;
-
-  return *this;
-};
 
 void Window::init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

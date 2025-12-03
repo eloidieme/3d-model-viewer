@@ -27,8 +27,13 @@ public:
 
   std::shared_ptr<Shader> getShader() const { return m_shader; }
 
+  void setTransparent(bool isTransparent) { m_isTransparent = isTransparent; }
+  bool isTransparent() const { return m_isTransparent; }
+
 private:
   std::shared_ptr<Shader> m_shader;
+
+  bool m_isTransparent = false;
 
   std::unordered_map<std::string, float> m_uniformsFloat;
   std::unordered_map<std::string, int> m_uniformsInt;

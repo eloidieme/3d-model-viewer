@@ -1,4 +1,5 @@
 #include "Graphics/ResourceManager.hpp"
+#include "Core/Log.hpp"
 
 std::shared_ptr<Texture> ResourceManager::loadTexture(const std::string &path,
                                                       TextureType typeName) {
@@ -41,4 +42,14 @@ std::shared_ptr<Shader> ResourceManager::getShader(const std::string &name) {
 void ResourceManager::clear() {
   m_shaders.clear();
   m_textures.clear();
+}
+
+void ResourceManager::reloadAllShaders() {
+  LOG_CORE_INFO("--- RELOADING ALL SHADERS ---");
+  for (auto &[name, shader] : m_shaders) {
+    if (shader) {
+      shader->reload();
+    }
+  }
+  LOG_CORE_INFO("--- RELOAD COMPLETE ---");
 }

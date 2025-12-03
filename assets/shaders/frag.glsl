@@ -45,5 +45,8 @@ void main() {
     vec4 objectColor = texture(texture_diffuse, TexCoord);
     vec3 result = (ambient + diffuse) * objectColor.rgb + specular;
 
+    float gamma = 1.1;
+    result = pow(result, vec3(1.0 / gamma));
+
     FragColor = vec4(result, objectColor.a);
 }
