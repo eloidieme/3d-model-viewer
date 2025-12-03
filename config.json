@@ -22,5 +22,8 @@
     "ShaderFrag": "assets/shaders/frag.glsl",
     "PlaneShaderVert": "assets/shaders/plane_vert.glsl",
     "PlaneShaderFrag": "assets/shaders/plane_frag.glsl"
+  },
+  "Bindings": {
+    "MoveForward": 87
   }
 }

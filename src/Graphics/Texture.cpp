@@ -55,12 +55,9 @@ Texture::Texture(const std::string &textureFilePath) {
 
       if (m_BPP == 1) {
         glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_R, GL_RED);
-        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_G,
-                            GL_RED); // G -> R
-        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_B,
-                            GL_RED); // B -> R
-        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_A,
-                            GL_ONE); // A -> 1.0
+        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_G, GL_RED);
+        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_B, GL_RED);
+        glTextureParameteri(m_textureID, GL_TEXTURE_SWIZZLE_A, GL_ONE);
       }
 
       if (m_BPP == 3)
