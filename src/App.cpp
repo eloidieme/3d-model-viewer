@@ -14,9 +14,7 @@ App::App(std::filesystem::path modelPath) {
 
   m_window->setEventCallback([this](Event &e) { this->onEvent(e); });
 
-  // --- FIX 1: INITIALIZE INPUT SYSTEM ---
   Input::init(m_window->getHandle());
-  // --------------------------------------
 
   m_layerStack.pushLayer(new EditorLayer(modelPath.string()));
 
@@ -32,10 +30,7 @@ void App::run() {
     float dt = time - m_lastFrameTime;
     m_lastFrameTime = time;
 
-    // --- FIX 2: UPDATE INPUT STATE ---
-    // This calculates mouse delta for the frame
     Input::update();
-    // ---------------------------------
 
     for (Layer *layer : m_layerStack) {
       layer->onUpdate(dt);
