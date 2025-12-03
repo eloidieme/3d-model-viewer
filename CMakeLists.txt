@@ -85,6 +85,7 @@ add_executable(main
     src/Core/Transform.cpp
     src/Editor/EditorLayer.cpp
     src/Graphics/Camera.cpp
+    src/Graphics/GeometryManager.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Shader.cpp
     src/Graphics/Texture.cpp

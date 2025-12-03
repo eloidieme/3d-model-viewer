@@ -11,15 +11,14 @@ struct Vertex {
 
 class Mesh {
 public:
-  Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
-  ~Mesh();
+  Mesh(const std::vector<Vertex> &vertices,
+       const std::vector<unsigned int> &indices);
+  ~Mesh() = default;
 
-  void drawGeometry();
+  void drawGeometry() const;
 
 private:
-  std::vector<Vertex> m_vertices;
-  std::vector<unsigned int> m_indices;
-
-  unsigned int VAO, VBO, EBO;
-  void setupMesh();
+  unsigned int m_baseVertex;
+  unsigned int m_indexOffset;
+  unsigned int m_indexCount;
 };

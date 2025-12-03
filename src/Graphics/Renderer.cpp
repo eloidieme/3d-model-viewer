@@ -1,5 +1,6 @@
 #include "Graphics/Renderer.hpp"
 #include "Core/Log.hpp"
+#include "Graphics/GeometryManager.hpp"
 #include "Scene/Scene.hpp"
 
 #include <algorithm>
@@ -9,6 +10,8 @@ void Renderer::init() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  GeometryManager::get().init();
 
   LOG_CORE_INFO("Renderer initialized (Depth Test: ENABLED)");
 
@@ -76,6 +79,8 @@ void Renderer::endScene() {
       opaqueQueue.push_back(cmd);
   }
 
+  glBindVertexArray(GeometryManager::get().getGlobalVAO());
+
   auto drawCommands = [&](const std::vector<RenderCommand> &queue) {
     std::shared_ptr<Shader> currentShader = nullptr;
 
@@ -117,4 +122,6 @@ void Renderer::endScene() {
   drawCommands(transparentQueue);
 
   glDepthMask(GL_TRUE);
+
+  glBindVertexArray(0);
 }
